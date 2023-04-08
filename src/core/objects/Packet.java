@@ -21,9 +21,6 @@ public class Packet extends NetworkObject {
 	// Protocol used to send packet (TCP or UDP)
 	private String protocol;
 	
-	// Network that packet belongs to
-	private Network network;
-	
 	// Device Packet is Currently Traveling to
 	private Device tempDestination;
 	
@@ -38,7 +35,6 @@ public class Packet extends NetworkObject {
 		this.source = source;
 		this.destination = destination;
 		this.protocol = protocol;
-		this.network = network;
 		
 		// Set Position
 		this.position = source.getPosition();
@@ -85,7 +81,7 @@ public class Packet extends NetworkObject {
 	// Draw Method
 	@Override
 	public void draw(Graphics g) {
-		g.setColor(Color.red);
+		g.setColor(source.getColor());
 		g.drawRect(Simulation.ScreenX(position.x - width / 2), 
 				Simulation.ScreenY(position.y + height / 2), 
 				Simulation.Screen(width), Simulation.Screen(height));
