@@ -66,7 +66,7 @@ public class Network {
 		
 		new Packet(
 				devices.get(rand1), devices.get(rand1).randomConnection(rand2),
-				Packet.Protocol.TCP, this);
+				Packet.Protocol.TCP);
 	}
 	
 	// Update Method

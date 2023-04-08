@@ -29,7 +29,7 @@ public class Packet extends NetworkObject {
 	private Device tempDestination;
 	
 	// Constructor
-	public Packet(Device source, Device destination, Protocol protocol, Network network) {
+	public Packet(Device source, Device destination, Protocol protocol) {
 		super();
 		
 		// Add to Network
@@ -68,10 +68,15 @@ public class Packet extends NetworkObject {
 			return;
 		}
 		
-		// 15% chance of packet getting lost
-        if (Math.random() < 0.001) {
-        	setStatus(Status.Dead);
-          return;
+		// small chance of packet getting lost, change to 0.001 for final
+        if (Math.random() < 0.01) {
+        	if (protocol == Protocol.TCP) {
+        		setStatus(Status.Lost);
+        		// new Packet(this.source, this.destination, this.protocol);
+        		
+        	} else if (protocol == Protocol.UDP) {
+        		setStatus(Status.Dead);
+        	}
         }
 		
 		// Obtain Direction to Destination

@@ -11,6 +11,7 @@ import org.newdawn.slick.SlickException;
 import core.Network;
 import core.NetworkObject;
 import core.geometry.Vector;
+import engine.FilterRule;
 import engine.Rule;
 import engine.Simulation;
 
@@ -26,7 +27,7 @@ public class Device extends NetworkObject {
 	private ArrayList<Device> connections;
 	
 	// List of iptable filter rules
-	private ArrayList<Rule> rules;
+	private ArrayList<FilterRule> FilterRules;
 	
 	// Device Information
 	private String name;
@@ -54,7 +55,7 @@ public class Device extends NetworkObject {
 		position.y = y;
 		
 		// Initialize Variables
-		rules = new ArrayList<>();
+		FilterRules = new ArrayList<>();
 		connections = new ArrayList<>();
 		
 		name = "NULL";
@@ -99,32 +100,32 @@ public class Device extends NetworkObject {
   
 	/* inserts a rule to the top of the iptable of this device
 	 */
-	public void insertRule(Rule.RuleType rule, int[] sourceIP, int netmask,
+	public void insertRule(FilterRule.RuleType rule, int[] sourceIP, int netmask,
 			Packet.Protocol protocol) {
-		Rule newRule = new Rule(rule, sourceIP, netmask, protocol);
+		FilterRule newRule = new FilterRule(rule, sourceIP, netmask, protocol);
 		if (!hasRule(newRule))
-			rules.add(0, newRule);
+			FilterRules.add(0, newRule);
 	}
 	
 	/* Appends a rule to the end of the iptable of this device
 	 */
-	public void appendRule(Rule.RuleType rule, int[] sourceIP, int netmask, 
+	public void appendRule(FilterRule.RuleType rule, int[] sourceIP, int netmask, 
 			Packet.Protocol protocol) {
-		Rule newRule = new Rule(rule, sourceIP, netmask, protocol);
+		FilterRule newRule = new FilterRule(rule, sourceIP, netmask, protocol);
 		if (!hasRule(newRule))
-			rules.add(newRule);
+			FilterRules.add(newRule);
 	}
 	
 	// Deletes iptable rule
-	public void deleteRule(Rule rule) {
-		rules.remove(rule);
+	public void deleteRule(FilterRule rule) {
+		FilterRules.remove(rule);
 	}
 	
 	/* Checks if the iptable rule exists. Returns true if it exists, returns
 	 * false if it does not.
 	 */
 	public boolean hasRule(Rule rule) {
-		return rules.contains(rule);
+		return FilterRules.contains(rule);
 	}
 	
 	// Protocol Method
@@ -134,7 +135,7 @@ public class Device extends NetworkObject {
 	 */
 	public void protocol(Packet packet) {
 	
-	    for (Rule curRule : rules) {
+	    for (FilterRule curRule : FilterRules) {
 	        // if there is a matching rule
 	        if (hasMatchingIP(packet, curRule) && 
 	            packet.getProtocol() == (curRule.getProtocol())) {
@@ -143,11 +144,11 @@ public class Device extends NetworkObject {
 	          if (packet.getProtocol() == Packet.Protocol.TCP) {
 	
 	            // DROP (silently delete)
-	            if (curRule.getRule() == Rule.RuleType.DROP) {
+	            if (curRule.getRule() == FilterRule.RuleType.DROP) {
 	              packet.setStatus(Status.Dead);
 	
 	            // REJECT (notify of deletion)
-	            } else if (curRule.getRule() == Rule.RuleType.REJECT) {
+	            } else if (curRule.getRule() == FilterRule.RuleType.REJECT) {
 	            	packet.setStatus(Status.Dead);
 	              // notify source device that it was rejected
 	
@@ -160,11 +161,11 @@ public class Device extends NetworkObject {
 	          } else if (packet.getProtocol() == Packet.Protocol.UDP) {
 	
 	            // DROP (silently delete)
-	            if (curRule.getRule() == Rule.RuleType.DROP) {
+	            if (curRule.getRule() == FilterRule.RuleType.DROP) {
 	            	packet.setStatus(Status.Dead);
 	
 	            // REJECT (silently delete)
-	            } else if (curRule.getRule() == Rule.RuleType.REJECT) {
+	            } else if (curRule.getRule() == FilterRule.RuleType.REJECT) {
 	            	packet.setStatus(Status.Dead);
 	
 	            } // No ACCEPT option, because accept does nothing
@@ -187,7 +188,7 @@ public class Device extends NetworkObject {
 	}
 	
 	// Checks if the ip of the packet matches the ip of the rule
-	private boolean hasMatchingIP(Packet packet, Rule rule) {
+	private boolean hasMatchingIP(Packet packet, FilterRule rule) {
 		boolean result = false;
 		
 		int[] sourceIP = packet.getSourceIP();

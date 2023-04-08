@@ -138,7 +138,7 @@ public class Simulation extends BasicGameState {
 		Device five = new Device(120, 70);
 		five.setIP(3, 6, 9, 12);
 		
-		two.insertRule(Rule.RuleType.DROP, one.getIP(), 32, Packet.Protocol.TCP);
+		two.insertRule(FilterRule.RuleType.DROP, one.getIP(), 32, Packet.Protocol.TCP);
 		
 		one.addConnection(two);
 		two.addConnection(three);
@@ -148,7 +148,7 @@ public class Simulation extends BasicGameState {
 		four.addConnection(five);
 		five.addConnection(one);
 		
-		new Packet(one, two, Packet.Protocol.TCP, network);
+		new Packet(one, two, Packet.Protocol.TCP);
 	}
 
 	@Override
