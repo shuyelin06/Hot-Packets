@@ -4,30 +4,36 @@ import core.objects.Device;
 
 public class NatRule extends Rule {
 	public enum RuleType {PREROUTING, POSTROUTING};
+	public enum NatType {SNAT, DNAT};
 	
 	// Rule can be either PREOUTING or POSTROUTING
 	private RuleType routingRule;
 	
-	// Holds the device that is the sender of the packet
-	private int[] SNAT;	
-	// Holds the device that is the reciever of the packet
-	private int[] DNAT;
+	// This rule performs either snat (changes source ip of packet) or dnat
+	// (changes 
+	private NatType natType;
 	
-	public NatRule(RuleType rule, int[] sourceIP, Device destination) {
-		routingRule = rule;
-		SNAT = sourceIP;
-		DNAT = destination.getIP();
+	// Holds the new IP to be changed
+	private int[] newIP;
+	// Holds the IP to change;
+	private int[] oldIP;
+	
+	public NatRule(NatType natType, int[] newIP, int[] oldIP) {
+		this.natType = natType;
+		this.newIP = newIP;
+		this.oldIP = oldIP;
 	}
 	
-	public RuleType getRule() {
-		return routingRule;
+	public NatType getNatType() {
+		return natType;
 	}
 	
-	public int[] getSnat() {
-		return SNAT;
+	public int[] getNewIP() {
+		return newIP;
 	}
 	
-	public int[] getDnat() {
-		return DNAT;
+	public int[] getOldIP() {
+		return oldIP;
 	}
+
 }

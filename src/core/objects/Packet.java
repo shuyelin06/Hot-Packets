@@ -21,6 +21,7 @@ public class Packet extends NetworkObject {
 	private Device destination;
 	
 	private int[] sourceIP;
+	private int[] destIP;
 	
 	// Protocol used to send packet (TCP or UDP)
 	private Protocol protocol;
@@ -41,6 +42,7 @@ public class Packet extends NetworkObject {
 		this.protocol = protocol;
 		
 		sourceIP = source.getIP();
+		destIP = destination.getIP();
 		
 		// Set Position
 		this.position = source.getPosition();
@@ -71,7 +73,7 @@ public class Packet extends NetworkObject {
 			}
 			
 			// small chance of packet getting lost, change to 0.001 for final
-	        if (Math.random() < 0.01) {
+	        if (Math.random() < 0.001) {
 	        	if (protocol == Protocol.TCP) {
 	        		setStatus(Status.Lost);
 	        		
@@ -158,6 +160,18 @@ public class Packet extends NetworkObject {
 
 	public int[] getSourceIP() {
 		return sourceIP;
+	}
+	
+	public int[] getDestIP() {
+		return destIP;
+	}
+	
+	public void setSourceIP(int[] ip) {
+		sourceIP = ip;
+	}
+	
+	public void setDestIP(int[] ip) {
+		destIP = ip;
 	}
 	
 }
