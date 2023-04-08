@@ -25,7 +25,7 @@ public class SliderBox extends Box {
 		packetSlider = new Slider(0, 3f);
 		packetSlider.setValue(Settings.Packet_Speed);
 		
-		zoom = new Slider(1f, 15f);
+		zoom = new Slider(7.5f, 30f);
 		zoom.setValue(Settings.Pixels_Per_Unit);
 	}
 	

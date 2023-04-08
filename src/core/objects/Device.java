@@ -14,7 +14,9 @@ import core.NetworkObject.Status;
 import core.geometry.Vector;
 import core.protocols.FilterRule;
 import core.protocols.Rule;
+import engine.Settings;
 import engine.Simulation;
+import graphics.MessageBoard;
 
 /*
  * Device Class:
@@ -45,6 +47,8 @@ public class Device extends NetworkObject {
 	private Color deviceColor;
 	
 	/* Device Statistics */
+	private MessageBoard messagesReceived; 	// Messages (Recently) Received
+	
 	private int packetsSent; // Packets Sent Through Device
 	private int packetsReceived; // Packets Received
 	
@@ -56,6 +60,9 @@ public class Device extends NetworkObject {
 		Network.getInstance().addDevice(this);
 		
 		// Statistics
+		messagesReceived = new MessageBoard(Color.green);
+		
+		packetsReceived = 0;
 		packetsSent = 0;
 		
 		// Set Postion
@@ -135,6 +142,10 @@ public class Device extends NetworkObject {
 		return FilterRules.contains(rule);
 	}
 	
+	// Update Device
+	public void update() {
+		messagesReceived.update();
+	}
 	// Protocol Method
 	// Performs a protocol on a packet that has reached it
 	/* Checks if the packet matches any rules and drops or accepts it based on
@@ -142,8 +153,13 @@ public class Device extends NetworkObject {
 	 */
 	public void protocol(Packet packet) {
 		/* Increment Device Statistics */
-		if ( packet.getSource() == this ) { this.packetsSent++; } 
-		if ( packet.getDestination() == this ) { this.packetsReceived++; } 
+		if ( packet.getSource() == this ) { 
+			this.packetsSent++; 
+		} 
+		if ( packet.getDestination() == this ) {
+			messagesReceived.addMessage(packet.getMessage());
+			this.packetsReceived++; 
+		} 
 		
 		if (packet.getStatus() == Packet.Status.Lost) {
 			new Packet(packet.getSource(), packet.getDestination(), 
@@ -308,12 +324,17 @@ public class Device extends NetworkObject {
 		for ( Device dest : connections ) {
 			drawEdge(dest, g);
 		}
+		
+		// Draw Received Messages
+		messagesReceived.render(g, 
+			Simulation.ScreenX(position.x + width / 2), 
+			Simulation.ScreenY(position.y + height / 2));
 	}
 	
 	// Draw Edge
 	private void drawEdge(Device d, Graphics g) {
 		g.setColor(new Color(211, 211, 211, 200));
-		g.setLineWidth(4);
+		g.setLineWidth(Settings.Pixels_Per_Unit / 2.5f);
 		
 		// Get direction to destination
 		Vector direction = position.directionTo(d.position);

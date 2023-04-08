@@ -29,6 +29,9 @@ public class Packet extends NetworkObject {
 	// Device Packet is Currently Traveling to
 	private Device tempDestination;
 	
+	// Message the Packet is Carrying 
+	private String message;
+	
 	// Constructor
 	public Packet(Device source, Device destination, Protocol protocol) {
 		super();
@@ -41,8 +44,10 @@ public class Packet extends NetworkObject {
 		this.destination = destination;
 		this.protocol = protocol;
 		
-		sourceIP = source.getIP();
-		destIP = destination.getIP();
+		sourceIP = source.getIP(); 		// Source IP
+		destIP = destination.getIP(); 	// Destination IP
+		
+		message = "[Empty Message]"; 	// Empty Message
 		
 		// Set Position
 		this.position = source.getPosition();
@@ -56,6 +61,10 @@ public class Packet extends NetworkObject {
 	
 	// Gets Destination
 	public Device getDestination() { return destination; }
+	
+	
+	// Get Message
+	public String getMessage() { return message; }
 	
 	// Sets the Next Device to Travel to
 	public void nextDevice(Device d) {
@@ -140,18 +149,24 @@ public class Packet extends NetworkObject {
 			
 			info.add("---");
 			
+			// Packet Protocol
 			String stringProtocol;
 			if ( protocol == Protocol.TCP ) {
 				stringProtocol = "TCP";
 			} else {
 				stringProtocol = "UDP";
 			}
+			info.add("Protocol: " + stringProtocol);	
 			
-			info.add("Protocol: " + stringProtocol);
+			// Packet Message
+			info.add("Message: " + message); 
 			
 		} else if ( status == Status.Lost ) {
 			info.add("Packet LOST");
-			info.add("Resending...");
+			
+			if ( protocol == Protocol.TCP ) {
+				info.add("Resending...");
+			}
 		}
 		
 		
