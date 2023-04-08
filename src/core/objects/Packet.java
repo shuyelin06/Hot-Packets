@@ -28,9 +28,16 @@ public class Packet extends NetworkObject {
 		this.position = source.getPosition();
 		
 		// Temp
-		this.tempDestination = destination;
+		source.protocol(this);
 	}
 	
+	// Gets Destination
+	public Device getDestination() { return destination; }
+	
+	// Sets the Next Device to Travel to
+	public void nextDevice(Device d) {
+		tempDestination = d;
+	}
 	
 	// Packet Update
 	public void update() {
@@ -46,7 +53,7 @@ public class Packet extends NetworkObject {
 	
 		// When Packet Reaches Destination
 		boolean reached = false;
-		if ( reached ) {
+		if ( Vector.Distance(position, tempDestination.getPosition()) < 2.5f ) {
 			tempDestination.protocol(this);
 		}
 	}

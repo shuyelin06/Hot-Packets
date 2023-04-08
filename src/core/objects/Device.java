@@ -41,10 +41,16 @@ public class Device extends NetworkObject {
 		ip = "NULL";
 	}
 	
+	// Adds an Outgoing Connection
+	public void addConnection(Device d) {
+		connections.add(d);
+	}
+	
 	// Protocol Method
 	// Performs a protocol on a packet that has reached it
 	public void protocol(Packet packet) {
-		
+		Device next = nextDevice(packet.getDestination());
+		packet.nextDevice(next);
 	}
 	
 	//
@@ -57,7 +63,7 @@ public class Device extends NetworkObject {
 				potential.add(connections.get(i));
 			}
 		}
-		return potential.get((int) ((Math.random() * (2 - 0)) + 0));
+		return potential.get((int) (0));
 	}
 	
 	private boolean nextDeviceAux(Device curr, Device destination, ArrayList<Device> traveled) {
@@ -77,6 +83,8 @@ public class Device extends NetworkObject {
 				nextDeviceAux(curr.connections.get(i), destination, traveled);
 			}
 		}
+		
+		return true;
 	}
 	
 	// Draw Method
@@ -88,8 +96,9 @@ public class Device extends NetworkObject {
 			Simulation.ScreenX(position.x - width / 2), 
 			Simulation.ScreenY(position.y + height / 2), 
 			Simulation.Screen(width), Simulation.Screen(height));
+		
+		// Draw Connection
+		g.setColor(Color.green);
 	}
-	
-}{
 	
 }

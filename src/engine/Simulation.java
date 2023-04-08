@@ -54,13 +54,22 @@ public class Simulation extends BasicGameState {
 		// Testing
 		Device one = new Device(5, 50);
 		Device two = new Device(45, 75);
+		Device three = new Device(70, 30);
+		Device four = new Device(100, 45);
+		
+		one.addConnection(two);
+		two.addConnection(three);
+//		three.addConnection(four);
+		
+		two.addConnection(four);
 		
 		network.addDevice(one);
-		network.addDevice(new Device(10, 5));
-		network.addDevice(new Device(30, 5));
 		network.addDevice(two);
+		network.addDevice(three);
+		network.addDevice(four);
 		
-		network.addPacket(new Packet(one, two));
+		
+		network.addPacket(new Packet(one, four));
 	}
 
 	@Override

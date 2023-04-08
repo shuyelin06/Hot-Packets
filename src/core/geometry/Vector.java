@@ -31,6 +31,10 @@ public class Vector {
 	// Vector Magnitude
 	public float magnitude() { return (float) Math.sqrt(x * x + y * y); };
 	
+	// Distance between Two Vectors
+	public static float Distance(Vector v1, Vector v2) {
+		return (float) Math.sqrt((v2.x - v1.x) * (v2.x - v1.x) + (v2.y - v1.y) * (v2.y - v1.y));
+	}
 	// Vector Difference between Two Vectors
 	public static Vector VectorDifference(Vector from, Vector to) {
 		return new Vector(to.x - from.x, to.y - from.y);
