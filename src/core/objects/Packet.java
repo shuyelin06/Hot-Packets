@@ -1,5 +1,7 @@
 package core.objects;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
@@ -40,8 +42,8 @@ public class Packet extends NetworkObject {
 		this.position = source.getPosition();
 		
 		// Set Width and Height
-		this.width = 0.5f;
-		this.height = 0.5f;
+		this.width = 1f;
+		this.height = 1f;
 		
 		// Temp
 		source.protocol(this);
@@ -82,11 +84,12 @@ public class Packet extends NetworkObject {
 	@Override
 	public void draw(Graphics g) {
 		g.setColor(source.getColor());
-		g.drawRect(Simulation.ScreenX(position.x - width / 2), 
-				Simulation.ScreenY(position.y + height / 2), 
-				Simulation.Screen(width), Simulation.Screen(height));
+		g.fillRect(Simulation.ScreenX(position.x - width / 4), 
+				Simulation.ScreenY(position.y + height / 4), 
+				Simulation.Screen(width / 2), Simulation.Screen(height / 2));
 	}
 	
+	// Sets Packet Status
 	public void setStatus(Status status) {
 		this.status = status;
 	}
@@ -99,5 +102,11 @@ public class Packet extends NetworkObject {
 	
 	public String getProtocol() {
 		return protocol;
+	}
+	
+	// Gets an Array of Strings Describing the Device
+	public void getInfo(ArrayList<String> info) {
+		info.add("Packet");
+		info.add("==========");
 	}
 }

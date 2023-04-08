@@ -1,5 +1,7 @@
 package core;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
@@ -48,6 +50,12 @@ public abstract class NetworkObject {
 	// Getters
 	public float getX() { return position.x; }
 	public float getY() { return position.y; }
+	
+	public float getWidth() { return width; }
+	public float getHeight() { return height; }
+	
+	// Gets an Array of Strings Decribing the Device
+	public abstract void getInfo(ArrayList<String> info);
 	
 	// Gets the Device's Position
 	public Vector getPosition() { return position.copy(); }

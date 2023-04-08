@@ -170,9 +170,8 @@ public class Simulation extends BasicGameState {
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
 		if ( input.isMousePressed(Input.MOUSE_LEFT_BUTTON) ) {
-			selectedEntity = network.searchForObject(
-					Simulation.SimX(input.getMouseX()), Simulation.SimY(input.getMouseY()));
-//			System.out.println(selectedEntity);
+			infoBox.setSelected(network.searchForObject(
+					Simulation.SimX(input.getMouseX()), Simulation.SimY(input.getMouseY())));
 		}
 		
 		// Handes Mouse Panning (Grab and Move)

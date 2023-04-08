@@ -68,6 +68,13 @@ public class Device extends NetworkObject {
 	
 	public Color getColor() { return deviceColor; }
 	
+	// Gets an Array of Strings Describing the Device
+	public void getInfo(ArrayList<String> info) {
+		info.add("Device");
+		info.add("==========");
+		info.add(new Integer(identifier).toString());
+	}
+		
 	// Adds an Outgoing Connection
 	public void addConnection(Device d) {
 		connections.add(d);
