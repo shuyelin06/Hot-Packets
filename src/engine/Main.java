@@ -6,11 +6,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class Main extends StateBasedGame 
-{
-	// GameState IDs
-	public static final int EXAMPLE_ID = 0;
-      
+public class Main extends StateBasedGame {
     // BasicGameStates 
     private BasicGameState example;
     

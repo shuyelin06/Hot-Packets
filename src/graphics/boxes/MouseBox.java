@@ -39,6 +39,7 @@ public class MouseBox extends Box {
 		lastMouseY = input.getMouseY();
 	}
 		
+	// Handle Mouse Panning
 	@Override
 	protected void mouseClick(float mouseX, float mouseY) {
 		center.x -= (mouseX - lastMouseX) / Settings.Pixels_Per_Unit;

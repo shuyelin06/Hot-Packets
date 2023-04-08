@@ -19,7 +19,7 @@ public class SliderBox extends Box {
 		tickSlider = new Slider(0, 120f);
 		tickSlider.setValue(Settings.Ticks_Per_Second);
 		
-		packetSlider = new Slider(0, 5f);
+		packetSlider = new Slider(0, 3f);
 		packetSlider.setValue(Settings.Packet_Speed);
 	}
 	
