@@ -26,6 +26,7 @@ import core.objects.Packet;
 import graphics.Box;
 import graphics.boxes.InfoBox;
 import input.MousePanner;
+import input.Text_Input;
 
 public class Simulation extends BasicGameState {
 	// ID of GameState (IGNORE)
@@ -51,6 +52,9 @@ public class Simulation extends BasicGameState {
 	private TextField text;
 	private TextField text1;
 	private UnicodeFont font = getNewFont("Arial" , 16);
+	
+	// Track Commands
+	private Text_Input commands;
 
 	// Tracks Mouse Panning
 	private MousePanner mousePanner;
@@ -200,6 +204,11 @@ public class Simulation extends BasicGameState {
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
 
+		
+		if(input.isKeyPressed(Input.KEY_SPACE)) {
+			
+		}
+		
 		if ( input.isMousePressed(Input.MOUSE_LEFT_BUTTON) ) {
 			selectedEntity = network.searchForObject(
 					Simulation.SimX(input.getMouseX()), Simulation.SimY(input.getMouseY()));
