@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.newdawn.slick.Graphics;
 
@@ -41,6 +42,18 @@ public class Network {
 	public void addDevice(Device d) { devices.add(d); }
 	// Add a Packet
 	public void addPacket(Packet p) { packets.add(p); }
+	
+	// Search Device Method - Searches for a Device Matching
+	// an IP Address
+	public Device searchForDevice(int[] ip) {
+		for ( Device d : devices ) {
+			if ( Arrays.equals(ip, d.getIP()) ) {
+				return d;
+			}
+		}
+		
+		return null;
+	}
 	
 	// Search Object Method - Searches for a NetworkObject Matching
 	// specific game corodinates

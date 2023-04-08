@@ -13,8 +13,12 @@ import org.newdawn.slick.gui.TextField;
 
 import commandparsing.CommandParser;
 import commandparsing.Prerouting;
+import core.Network;
+import core.objects.Device;
+import core.objects.Packet;
 import commandparsing.CommandParser.CommandType;
 import engine.Settings;
+import engine.Simulation;
 import graphics.Box;
 
 public class CommandBox extends Box {
@@ -106,19 +110,83 @@ public class CommandBox extends Box {
 		
 		// get type of command and make object of 
 		// appropriate type to parse it
+		String param1 = " ";
+		String param2 = " ";
+		String param3 = " ";
+		
 		CommandType type = command.getCommandType();
 		if (type != null) {
-			if (type == CommandType.PREROUTING) {
-				Prerouting prting = new Prerouting(text);
-				// print src and dest IPs
-				System.out.println(prting.getSrcAndDestIPs());
+			switch ( type ) {
+				case PREROUTING:
+					Prerouting prting = new Prerouting(text);
+					System.out.println("PREROUTING!");
+					break;
+					
+				case POSTROUTING:
+					System.out.println("POSTROUTING!");
+					break;
+					
+				case FILTER:
+					System.out.println("FILTER!");
+					break;
+					
+				case CREATEDEVICE:
+					int[] ip = Simulation.ArrayIP(param1);
+					String name = param2;
+					
+					Device device = new Device(0, 0);
+					device
+						.setIP(ip)
+						.setName(name);
+					
+					break;
+					
+				case CREATECONNECTION:
+					// Find IP Addresses
+					int[] srcIP = Simulation.ArrayIP(param1);
+					int[] destIP = Simulation.ArrayIP(param2);
+					
+					// Find Source and Destination Device
+					Device srcDevice = Network.getInstance().searchForDevice(srcIP);
+					Device destDevice = Network.getInstance().searchForDevice(destIP);
+					
+					// Attempt to Add Edge
+					srcDevice.addConnection(destDevice);
+					
+					break;
+					
+				case SENDPACKET:
+					// Find IP Addresses
+					int[] srcIP = Simulation.ArrayIP(param1);
+					int[] destIP = Simulation.ArrayIP(param2);
+					
+					// Find Source and Destination Device
+					Device srcDevice = Network.getInstance().searchForDevice(srcIP);
+					Device destDevice = Network.getInstance().searchForDevice(destIP);
+					
+					// Protocol
+					Packet.Protocol protocol = 
+						( param3.toLowerCase().equals("tcp") ? Packet.Protocol.TCP : Packet.Protocol.UDP );
+					
+					// Randomize Network
+					
+					// Create a Packet
+					new Packet(srcDevice, destDevice, protocol, Network.getInstance());
+					
+					break;
+					
+				case PING:
+					// Find IP Address
+					int[] srcIP = Simulation.ArrayIP(param1);
+					
+					// Find Device
+					Device device = Network.getInstance().searchForDevice(srcIP);
+					// Tell Device to Ping
+					device.setPing(true);
+					
+					break;
+					
 			}
-//				else if (type == CommandType.POSTROUTING) {
-//					Postrouting psting = new Postrouting(text);
-//				}
-//				else {
-//					Filter filt = new Filter(text);
-//				}
 		}
 	}
 	
