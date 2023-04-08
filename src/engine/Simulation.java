@@ -3,6 +3,7 @@ package engine;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
@@ -12,6 +13,7 @@ import core.Network;
 import core.geometry.Vector;
 import core.objects.Device;
 import core.objects.Packet;
+import input.MousePanner;
 
 public class Simulation extends BasicGameState {
 	private int id;
@@ -24,6 +26,12 @@ public class Simulation extends BasicGameState {
 	
 	// Network the Simulation Uses
 	private Network network;
+	
+	// Track User Input
+	private Input input;
+	
+	// Tracks Mouse Panning
+	private MousePanner mousePanner;
 	
 	// Constructor
 	public Simulation(int id) { 
@@ -38,11 +46,24 @@ public class Simulation extends BasicGameState {
 	public static float ScreenY(float y) 
 		{ return (Settings.Screen_Height * 0.5f) - (y - center.y) * Settings.Pixels_Per_Unit;}
 	
+	// Convert from Screen to Simulation Coordinates
+	public static float Sim(float val) 
+		{ return val / Settings.Pixels_Per_Unit; }
+	public static float SimX(float x) 
+		{ return (x - Settings.Screen_Width / 2) / Settings.Pixels_Per_Unit + center.x; }
+	public static float SimY(float y) 
+		{ return -(y - Settings.Screen_Height / 2) / Settings.Pixels_Per_Unit + center.y; }
+	
 	@Override
 	public int getID() { return id; }
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
+		// Obtain User Input
+		input = arg0.getInput();
+		
+		mousePanner = new MousePanner(); // Initialize Mouse Panner
+		
 		// Initialize the network
 		network = new Network();
 		
@@ -80,10 +101,19 @@ public class Simulation extends BasicGameState {
 		
 		g.setColor(Color.white);
 		g.drawOval(Settings.Screen_Width / 2, Settings.Screen_Height / 2, 20, 20);
+		
+		if ( input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ) {
+			g.drawOval(ScreenX(SimX(input.getMouseX())), ScreenY(SimY(input.getMouseY())), 20, 20);
+		}
 	}
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
+		// Handes Mouse Panning (Grab and Move)
+		mousePanner.pan(input, center);
+		
+		
+		
 		if ( arg0.getInput().isKeyDown(Input.KEY_Z) ) {
 			Settings.Pixels_Per_Unit -= 0.15f;
 		}
