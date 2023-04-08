@@ -85,52 +85,52 @@ public class Device extends NetworkObject {
 	 * the rule matched
 	 */
 	public void protocol(Packet packet) {
-    for (Rule curRule : rules) {
-        // if there is a matching rule
-        if (packet.getSource() == curRule.getSource() && 
-            packet.getProtocol().equals(curRule.getProtocol())) {
-
-          // TCP protocol
-          if (packet.getProtocol().equals("TCP")) {
-
-            // DROP (silently delete)
-            if (curRule.getRule().equals("DROP")) {
-              super.status = Status.Dead;
-
-            // REJECT (notify of deletion)
-            } else if (curRule.getRule().equals("REJECT")) {
-              super.status = Status.Dead;
-              // notify source device that it was rejected
-
-            // ACCEPT, default
-            } else {
-              // notify source device that it was accepted
-            }
-
-          // UDP protocol
-          } else if (packet.getProtocol().equals("UDP")) {
-
-            // 25% chance of dropping
-            if (Math.random() < 0.25) {
-              super.status = Status.Dead;
-              return;
-            }
-
-            // DROP (silently delete)
-            if (curRule.getRule().equals("DROP")) {
-              super.status = Status.Dead;
-
-            // REJECT (silently delete)
-            } else if (curRule.getRule().equals("REJECT")) {
-              super.status = Status.Dead;
-
-            } // No ACCEPT option, because accept does nothing
-          }
-
+		// 15% chance of dropping
+        if (Math.random() < 0.15) {
+        	packet.setStatus(Status.Dead);
+          return;
         }
-        break;
-      }
-
+	
+	    for (Rule curRule : rules) {
+	        // if there is a matching rule
+	        if (packet.getSource() == curRule.getSource() && 
+	            packet.getProtocol().equals(curRule.getProtocol())) {
+	
+	          // TCP protocol
+	          if (packet.getProtocol().equals("TCP")) {
+	
+	            // DROP (silently delete)
+	            if (curRule.getRule().equals("DROP")) {
+	              packet.setStatus(Status.Dead);
+	
+	            // REJECT (notify of deletion)
+	            } else if (curRule.getRule().equals("REJECT")) {
+	            	packet.setStatus(Status.Dead);
+	              // notify source device that it was rejected
+	
+	            // ACCEPT, default
+	            } else {
+	              // notify source device that it was accepted
+	            }
+	
+	          // UDP protocol
+	          } else if (packet.getProtocol().equals("UDP")) {
+	
+	            // DROP (silently delete)
+	            if (curRule.getRule().equals("DROP")) {
+	            	packet.setStatus(Status.Dead);
+	
+	            // REJECT (silently delete)
+	            } else if (curRule.getRule().equals("REJECT")) {
+	            	packet.setStatus(Status.Dead);
+	
+	            } // No ACCEPT option, because accept does nothing
+	          }
+	
+	        }
+	        break;
+	      }
+	    
 
 		Device next;
 		

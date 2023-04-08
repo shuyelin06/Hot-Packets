@@ -5,11 +5,15 @@ import org.newdawn.slick.Graphics;
 
 import core.Network;
 import core.NetworkObject;
+import core.NetworkObject.Status;
 import core.geometry.Vector;
 import engine.Settings;
 import engine.Simulation;
 
 public class Packet extends NetworkObject {	
+	
+	public enum Protocol { TCP, UDP }
+	
 	// Source Device and Destination Device (Final)
 	private Device source;
 	private Device destination;
@@ -85,6 +89,10 @@ public class Packet extends NetworkObject {
 		g.drawRect(Simulation.ScreenX(position.x - width / 2), 
 				Simulation.ScreenY(position.y + height / 2), 
 				Simulation.Screen(width), Simulation.Screen(height));
+	}
+	
+	public void setStatus(Status status) {
+		this.status = status;
 	}
 	
 	/* Returns the source device of this packet
