@@ -3,6 +3,7 @@ package core;
 import org.newdawn.slick.Graphics;
 
 import core.geometry.Vector;
+import engine.Settings;
 
 /*
  * NetworkObject Class:
@@ -20,11 +21,24 @@ public abstract class NetworkObject {
 	public enum Status { Alive, Dead }
 	protected Status status;
 	
-	// Position
+	// Position (Units)
 	protected Vector position;
+	
+	// Width and Height (Units)
+	protected float width, height;
 	
 	// Constructor
 	public NetworkObject() {
+		// Initialize Position
+		position = new Vector();
+		
+		// Initialize Status
+		status = Status.Alive;
+		
+		// Intialize Width and Height
+		width = 2;
+		height = 2;
+		
 		// Maintains Unique Identifier
 		identifier = idCounter;
 		idCounter++;
