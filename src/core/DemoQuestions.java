@@ -83,9 +83,13 @@ public class DemoQuestions {
 		"Cipher Tech provides computer programming services",
 		"WE LOVE CIPHER TECHNOLOGY SOLUTIONS"
 		));
+	
+	public static final ArrayList<String> Money = new ArrayList<String>(
+			Arrays.asList("$$"));
+			
 
 	
-	public final static ArrayList<String> array = bitcamp;
+	public final static ArrayList<String> array = Money;
 	
 	public static String randomString() { 
 		if ( array != null ) {
