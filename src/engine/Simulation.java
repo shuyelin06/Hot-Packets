@@ -102,8 +102,7 @@ public class Simulation extends BasicGameState {
 		network.addDevice(four);
 		network.addDevice(five);
 		
-		
-		network.addPacket(new Packet(one, five));
+		network.addPacket(new Packet(one, two, "TCP", network));
 	}
 
 	@Override
