@@ -88,6 +88,8 @@ public class Simulation extends BasicGameState {
 		Device four = new Device(100, 45);
 		Device five = new Device(120, 70);
 		
+		two.insertRule("DROP", one, "TCP");
+		
 		one.addConnection(two);
 		two.addConnection(three);
 //		three.addConnection(four);
