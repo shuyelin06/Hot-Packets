@@ -11,9 +11,9 @@ public class Settings {
 	
 	// Ticks per Second
 	// A tick is defined as one simulation time frame.
-	public static float Ticks_Per_Second = 120f;
+	public static float Ticks_Per_Second = 30f;
 	
 	// Packet Speed
 	// Amount of units a packet moves every tick
-	public static float Packet_Speed = 0.05f;
+	public static float Packet_Speed = 0.15f;
 }
