@@ -34,11 +34,13 @@ public class Device extends NetworkObject {
 	
 	// Device image (same for every device object)
 	private static Image device_image;
-	private static Image scaledDeviceImg;
 	
 	
 	// Get Connections
 	public ArrayList<Device> getConnections() { return connections; }
+	
+	// Device Color Representation
+	private Color deviceColor;
 	
 	// Constructor
 	public Device(float x, float y) {
@@ -60,7 +62,12 @@ public class Device extends NetworkObject {
 		
 		width = 7;
 		height = 7;
+		
+		deviceColor = new Color((int) (Math.random() * 255),
+				(int) (Math.random() * 255), (int) (Math.random() * 255));
 	}
+	
+	public Color getColor() { return deviceColor; }
 	
 	// Adds an Outgoing Connection
 	public void addConnection(Device d) {
@@ -200,8 +207,6 @@ public class Device extends NetworkObject {
 		if ( device_image == null ) {
 			try {
 				device_image = new Image("res/Device.png");
-				scaledDeviceImg = device_image.getScaledCopy(
-						(int)Simulation.Screen(7), (int)Simulation.Screen(7));
 			} catch (SlickException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -214,7 +219,9 @@ public class Device extends NetworkObject {
 	@Override
 	public void draw(Graphics g) {
 		// Instantiate device image
-		get_image();
+		Image scaledDeviceImg = get_image().getScaledCopy(
+				(int)Simulation.Screen(width), (int)Simulation.Screen(height));
+		
 		// Draw device (device drawing)
 		g.drawImage(scaledDeviceImg, 
 				Simulation.ScreenX(position.x - width / 2), 
@@ -228,15 +235,16 @@ public class Device extends NetworkObject {
 	
 	// Draw Edge
 	private void drawEdge(Device d, Graphics g) {
-		g.setColor(new Color(211, 211, 211, 100));
+		g.setColor(new Color(211, 211, 211, 200));
+		g.setLineWidth(4);
 		
 		// Get direction to destination
 		Vector direction = position.directionTo(d.position);
 		float distance = position.distance(d.position);
 		
 		// Arrow End
-		float arrowEndX = position.x + direction.x * distance * 0.975f;
-		float arrowEndY = position.y + direction.y * distance * 0.975f;
+		float arrowEndX = position.x + direction.x * distance * 0.925f;
+		float arrowEndY = position.y + direction.y * distance * 0.925f;
 		
 		// Draw Arrow
 		g.drawLine(
@@ -254,5 +262,7 @@ public class Device extends NetworkObject {
 		g.drawLine(Simulation.ScreenX(arrowEndX), Simulation.ScreenY(arrowEndY), 
 				Simulation.ScreenX(arrowEndX + point2.x), 
 				Simulation.ScreenY(arrowEndY + point2.y));
+		
+		g.resetLineWidth();
 	}
 }
