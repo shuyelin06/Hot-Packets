@@ -14,9 +14,6 @@ public class Text_Input {
 	
 	boolean flag = true;
 	
-	public Text_Input() {
-	}
-	
 	// Add command to list of commands
 	public void addCommand(String text) {
 		this.commands.add(text);
@@ -47,10 +44,6 @@ public class Text_Input {
 //				Filter filt = new Filter(text);
 //			}
 		}
-		
-		
-		
-		
 	}
 	
 }

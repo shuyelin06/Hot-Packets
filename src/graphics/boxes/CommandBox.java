@@ -11,6 +11,9 @@ import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.gui.TextField;
 
+import commandparsing.CommandParser;
+import commandparsing.Prerouting;
+import commandparsing.CommandParser.CommandType;
 import engine.Settings;
 import graphics.Box;
 
@@ -74,7 +77,9 @@ public class CommandBox extends Box {
 	public void update() {
 		if ( input.isKeyPressed(Input.KEY_ENTER) ) {
 			System.out.println(text.getText());
+			parseCommand(text.getText());
 			text.setText("");
+			
 		}
 	}
 	
@@ -93,6 +98,28 @@ public class CommandBox extends Box {
 		text.setBorderColor(Color.transparent);
 		text.render(container, g);
 		
+	}
+	
+	// Parses command
+	private void parseCommand(String text) {
+		CommandParser command = new CommandParser(text);
+		
+		// get type of command and make object of 
+		// appropriate type to parse it
+		CommandType type = command.getCommandType();
+		if (type != null) {
+			if (type == CommandType.PREROUTING) {
+				Prerouting prting = new Prerouting(text);
+				// print src and dest IPs
+				System.out.println(prting.getSrcAndDestIPs());
+			}
+//				else if (type == CommandType.POSTROUTING) {
+//					Postrouting psting = new Postrouting(text);
+//				}
+//				else {
+//					Filter filt = new Filter(text);
+//				}
+		}
 	}
 	
 }

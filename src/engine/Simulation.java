@@ -108,8 +108,6 @@ public class Simulation extends BasicGameState {
 		center = new Vector(30, 30);
 				
 		
-		commands = new Text_Input();
-		
 		// Set Simulation Mode
 		simulationMode = Mode.Random;
 				
