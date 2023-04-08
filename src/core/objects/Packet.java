@@ -49,10 +49,7 @@ public class Packet extends NetworkObject {
 		this.width = 1.5f;
 		this.height = 1.5f;
 		
-		// Temp
 		source.protocol(this);
-		
-		System.out.println("New packet");
 	}
 	
 	// Gets Destination

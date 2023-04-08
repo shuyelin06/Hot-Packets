@@ -1,4 +1,4 @@
-package engine;
+package core.protocols;
 
 public class NatRule extends Rule {
 	

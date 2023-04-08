@@ -42,7 +42,9 @@ public class Network {
 	public Network() {
 		devices = new ArrayList<>();
 		packets = new ArrayList<>();
+		
 		newPackets = new Stack<>();
+		newDevices = new Stack<>();
 	}
 	
 	// Add a Device

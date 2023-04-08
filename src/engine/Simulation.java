@@ -22,6 +22,7 @@ import core.Network;
 import core.geometry.Vector;
 import core.objects.Device;
 import core.objects.Packet;
+import core.protocols.FilterRule;
 import graphics.Box;
 import graphics.Text_Input;
 import graphics.boxes.CommandBox;

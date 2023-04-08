@@ -12,8 +12,8 @@ import core.Network;
 import core.NetworkObject;
 import core.NetworkObject.Status;
 import core.geometry.Vector;
-import engine.FilterRule;
-import engine.Rule;
+import core.protocols.FilterRule;
+import core.protocols.Rule;
 import engine.Simulation;
 
 /*
