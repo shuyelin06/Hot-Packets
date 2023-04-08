@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class DemoQuestions {
-public final ArrayList<String> bitcamp = new ArrayList<String>(
+	
+
+	public static final ArrayList<String> bitcamp = new ArrayList<String>(
 		Arrays.asList
 		(
 		"bitcamp is a fun event",
@@ -24,7 +26,7 @@ public final ArrayList<String> bitcamp = new ArrayList<String>(
 		"bitcamp is awesome",
 		"WE LOVE GITHUB"
 		));
-public final ArrayList<String> gitHub = new ArrayList<String>(
+	public static final ArrayList<String> gitHub = new ArrayList<String>(
 		Arrays.asList
 		(
 		"GitHub is awesome",
@@ -43,7 +45,7 @@ public final ArrayList<String> gitHub = new ArrayList<String>(
 		"GitHub is easy to learn",
 		"WE LOVE GITHUB"
 		));
-public final ArrayList<String> CapitalOne = new ArrayList<String>(
+	public static final ArrayList<String> CapitalOne = new ArrayList<String>(
 		Arrays.asList
 		(
 		"Capital One was founded in 1994",
@@ -62,7 +64,7 @@ public final ArrayList<String> CapitalOne = new ArrayList<String>(
 		"Capital One for everyone",
 		"WE LOVE CAPITAL ONE"
 		));
-protected ArrayList<String> CipherTech = new ArrayList<String>(
+	public static final ArrayList<String> CipherTech = new ArrayList<String>(
 		Arrays.asList
 		(
 		"Cipher Tech has a nice logo",
@@ -82,6 +84,14 @@ protected ArrayList<String> CipherTech = new ArrayList<String>(
 		"WE LOVE CIPHER TECHNOLOGY SOLUTIONS"
 		));
 
-
+	
+	public final static ArrayList<String> array = bitcamp;
+	
+	public static String randomString() { 
+		if ( array != null ) {
+			return array.get((int) (Math.random() * array.size()));
+		}
+		return null;
+	}
 
 }

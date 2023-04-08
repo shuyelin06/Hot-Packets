@@ -1,6 +1,10 @@
 package core.protocols;
 
+import java.util.ArrayList;
+
 import core.objects.Device;
+import core.objects.Packet;
+import engine.Simulation;
 
 public class NatRule extends Rule {
 	public enum RuleType {PREROUTING, POSTROUTING};
@@ -22,6 +26,14 @@ public class NatRule extends Rule {
 		this.natType = natType;
 		this.newIP = newIP;
 		this.oldIP = oldIP;
+	}
+	
+	// Get Info for the Rule. Overridden
+	@Override
+	public void getInfo(ArrayList<String> info) {
+		info.add("Rule - NAT");
+		info.add("  " + (natType == NatType.SNAT ? "SNAT" : "DNAT"));
+		info.add("  " + Simulation.IPStringCIDR(oldIP) + " -> " + Simulation.IPString(newIP));
 	}
 	
 	public NatType getNatType() {

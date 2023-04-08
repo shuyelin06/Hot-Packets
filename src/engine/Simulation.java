@@ -22,7 +22,9 @@ import core.Network;
 import core.geometry.Vector;
 import core.objects.Device;
 import core.objects.Packet;
+import core.objects.Packet.Protocol;
 import core.protocols.FilterRule;
+import core.protocols.FilterRule.RuleType;
 import graphics.Box;
 import graphics.MessageBoard;
 import graphics.Text_Input;
@@ -221,6 +223,7 @@ public class Simulation extends BasicGameState {
 //		new Packet(one, six, Packet.Protocol.TCP);
 		
 		Device centrality = new Device(0,0);
+		centrality.setIP(10, 10, 10, 10);
 		
 		Device one = new Device(-45,20);
 		Device two = new Device(-45,10);
@@ -229,19 +232,29 @@ public class Simulation extends BasicGameState {
 		Device five = new Device(-45,-20);
 		
 		one.addConnection(centrality);
+		one.setIP(0, 0, 0, 0);
 		two.addConnection(centrality);
+		two.setIP(1, 1, 1, 1);
 		three.addConnection(centrality);
+		three.setIP(2, 2, 2, 2);
 		four.addConnection(centrality);
+		four.setIP(3, 3, 3, 3);
 		five.addConnection(centrality);
+		five.setIP(4, 4, 4, 4);
 		
 		Device output = new Device(20,0);
+		output.setIP(5, 5, 5, 5);
 		centrality.addConnection(output);
 		
 		Device clientOne = new Device(35,15);
+		clientOne.setIP(6, 6, 6, 6);
 		Device clientTwo = new Device(35,-15);
+		clientTwo.setIP(7, 7, 7, 7);
 		
 		output.addConnection(clientOne);
 		output.addConnection(clientTwo);
+		
+		centrality.insertRule(RuleType.DROP, one.getIP(), 32, centrality.getIP(), 0, Protocol.TCP);
 		
 	}
 

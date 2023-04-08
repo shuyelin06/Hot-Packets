@@ -36,9 +36,18 @@ public enum RuleType { ACCEPT, REJECT, DROP }
 	@Override
 	public void getInfo(ArrayList<String> info) {
 		info.add("Rule - Filter");
-		info.add("  Block: TCP");
-		info.add("  From: " + Simulation.IPStringCIDR(sourceIP));
-		info.add("  To: 2.2.2.2/32");
+		String ruleType;
+		if ( rule == RuleType.ACCEPT ) {
+			ruleType = "Accept";
+		} else if ( rule == RuleType.DROP ) {
+			ruleType = "Drop";
+		} else {
+			ruleType = "Reject";
+		}
+		
+		info.add("  " + ruleType + ": " + (protocol == Packet.Protocol.TCP ? "TCP" : "UDP"));
+		info.add("  From: " + Simulation.IPStringCIDR(sourceIP) + "/" + sNetmask);
+		info.add("  To: " + Simulation.IPString(destIP) + "/" + dNetmask);
 	}
 	
 	// Returns rule (ACCEPT or DROP)

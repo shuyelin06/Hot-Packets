@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import core.DemoQuestions;
 import core.Network;
 import core.NetworkObject;
 import core.NetworkObject.Status;
@@ -47,7 +48,7 @@ public class Packet extends NetworkObject {
 		sourceIP = source.getIP(); 		// Source IP
 		destIP = destination.getIP(); 	// Destination IP
 		
-		message = "[Empty Message]"; 	// Empty Message
+		message = DemoQuestions.randomString(); 	// Empty Message
 		
 		// Set Position
 		this.position = source.getPosition();
