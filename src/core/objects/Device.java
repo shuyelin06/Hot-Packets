@@ -44,12 +44,19 @@ public class Device extends NetworkObject {
 	// Device Color Representation
 	private Color deviceColor;
 	
+	/* Device Statistics */
+	private int packetsSent; // Packets Sent Through Device
+	private int packetsReceived; // Packets Received
+	
 	// Constructor
 	public Device(float x, float y) {
 		super();
 		
 		// Add to Network
 		Network.getInstance().addDevice(this);
+		
+		// Statistics
+		packetsSent = 0;
 		
 		// Set Postion
 		position.x = x;
@@ -80,6 +87,13 @@ public class Device extends NetworkObject {
 		info.add("Device");
 		info.add("==========");
 		info.add("IP: " + ipString());
+		info.add("Packets Sent: " + packetsSent);
+		info.add("Packets Received: " + packetsReceived);
+		
+		info.add("---");
+		for ( Rule r : FilterRules ) {
+			r.getInfo(info);
+		}
 	}
 		
 	// Adds an Outgoing Connection
@@ -135,6 +149,9 @@ public class Device extends NetworkObject {
 	 * the rule matched
 	 */
 	public void protocol(Packet packet) {
+		/* Increment Device Statistics */
+		if ( packet.getSource() == this ) { this.packetsSent++; } 
+		if ( packet.getDestination() == this ) { this.packetsReceived++; } 
 		
 		if (packet.getStatus() == Packet.Status.Lost) {
 			new Packet(packet.getSource(), packet.getDestination(), 

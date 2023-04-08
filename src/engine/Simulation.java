@@ -45,6 +45,13 @@ public class Simulation extends BasicGameState {
 		return simulation;
 	}
 	
+	// Convert from IP (Array) to String
+	public static String IPString(int[] ip) 
+		{ return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3]; }
+	// Convert from IP (Array) to String, Including CIDR
+	public static String IPStringCIDR(int[] ip) 
+	{ return IPString(ip) + "/" + ip[4]; }
+	
 	// Convert from Simulation to Screen Coordinates
 	public static float Screen(float val) 
 		{ return val * Settings.Pixels_Per_Unit; }
@@ -127,18 +134,18 @@ public class Simulation extends BasicGameState {
 		
 		infoBox = new InfoBox(); // Add InfoBox
 		infoBox
-			.setX(Settings.Screen_Width - 100)
-			.setY(475)
-			.setWidth(150)
-			.setHeight(200)
+			.setX(Settings.Screen_Width - 150)
+			.setY(600)
+			.setWidth(250)
+			.setHeight(300)
 			.initialize();
 		
 		simulationBox = new SliderBox();
 		simulationBox
 			.setX(Settings.Screen_Width - 100)
-			.setY(200)
+			.setY(150)
 			.setWidth(150)
-			.setHeight(300)
+			.setHeight(200)
 			.initialize();
 		
 		commandBox = new CommandBox(arg0, input);

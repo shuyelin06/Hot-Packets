@@ -33,19 +33,19 @@ public class SliderBox extends Box {
 	public void initialize() {
 		zoom
 			.setX(centerX)
-			.setY(centerY - height * 0.05f)
+			.setY(centerY - height * 0.1f)
 			.setWidth(width * 0.825f)
 			.setHeight(height * 0.15f);
 		
 		tickSlider
 			.setX(centerX)
-			.setY(centerY + height * 0.15f)
+			.setY(centerY + height * 0.1f)
 			.setWidth(width * 0.825f)
 			.setHeight(height * 0.15f);
 		
 		packetSlider
 			.setX(centerX)
-			.setY(centerY + height * 0.35f)
+			.setY(centerY + height * 0.3f)
 			.setWidth(width * 0.825f)
 			.setHeight(height * 0.15f);
 		
@@ -69,18 +69,24 @@ public class SliderBox extends Box {
 		super.draw(g);
 		
 		g.setColor(Color.black);
+		g.drawString("Press P", centerX - g.getFont().getWidth("Press P") / 2, 
+				centerY - height * 0.45f);
+		g.drawString("to send packets", centerX - g.getFont().getWidth("to send Packets") / 2, 
+				centerY - height * 0.35f);
+		
+		g.setColor(Color.black);
 		g.drawString("Zoom", centerX - g.getFont().getWidth("Zoom") / 2, 
-				centerY);
+				centerY - height * 0.05f);
 		zoom.draw(g);
 		
 		g.setColor(Color.black);
 		g.drawString("Ticks / Second", centerX - g.getFont().getWidth("Ticks / Second") / 2, 
-					centerY + height * 0.2f);	
+					centerY + height * 0.15f);	
 		tickSlider.draw(g);
 		
 		g.setColor(Color.black);
 		g.drawString("Packet Speed", centerX - g.getFont().getWidth("Packet Speed") / 2, 
-				centerY + height * 0.4f);	
+				centerY + height * 0.35f);	
 		packetSlider.draw(g);
 		
 	}
