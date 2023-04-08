@@ -15,5 +15,5 @@ public class Settings {
 	
 	// Packet Speed
 	// Amount of units a packet moves every tick
-	public static float Packet_Speed = 0.75f;
+	public static float Packet_Speed = 0.15f;
 }

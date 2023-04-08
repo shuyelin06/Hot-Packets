@@ -1,5 +1,7 @@
 package core.objects;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
@@ -17,6 +19,8 @@ public class Packet extends NetworkObject {
 	// Source Device and Destination Device (Final)
 	private Device source;
 	private Device destination;
+	
+	private int[] sourceIP;
 	
 	// Protocol used to send packet (TCP or UDP)
 	private Protocol protocol;
@@ -36,12 +40,14 @@ public class Packet extends NetworkObject {
 		this.destination = destination;
 		this.protocol = protocol;
 		
+		sourceIP = source.getIP();
+		
 		// Set Position
 		this.position = source.getPosition();
 		
 		// Set Width and Height
-		this.width = 0.5f;
-		this.height = 0.5f;
+		this.width = 1.5f;
+		this.height = 1.5f;
 		
 		// Temp
 		source.protocol(this);
@@ -87,12 +93,16 @@ public class Packet extends NetworkObject {
 	// Draw Method
 	@Override
 	public void draw(Graphics g) {
-		g.setColor(source.getColor());
-		g.drawRect(Simulation.ScreenX(position.x - width / 2), 
-				Simulation.ScreenY(position.y + height / 2), 
-				Simulation.Screen(width), Simulation.Screen(height));
+		if ( status == Status.Alive ) {
+			g.setColor(source.getColor());
+			g.fillRect(Simulation.ScreenX(position.x - width / 4), 
+					Simulation.ScreenY(position.y + height / 4), 
+					Simulation.Screen(width / 2), Simulation.Screen(height / 2));
+		}
+		
 	}
 	
+	// Sets Packet Status
 	public void setStatus(Status status) {
 		this.status = status;
 	}
@@ -106,4 +116,38 @@ public class Packet extends NetworkObject {
 	public Protocol getProtocol() {
 		return protocol;
 	}
+	
+
+	// Gets an Array of Strings Describing the Device
+	public void getInfo(ArrayList<String> info) {
+		info.add("Packet");
+		info.add("==========");
+		
+		if ( status == Status.Alive ) {
+			info.add("Source:");
+			info.add("  " + source.ipString());
+			
+			info.add("Destination:");
+			info.add("  " + destination.ipString());
+			
+			info.add("Protocol: ");
+			
+			if ( protocol == Protocol.TCP ) {
+				info.add("  TCP");
+			} else {
+				info.add("  UDP");
+			}
+		} else if ( status == Status.Lost ) {
+			info.add("Packet LOST");
+			info.add("Resending...");
+		}
+		
+		
+		
+	}
+
+	public int[] getSourceIP() {
+		return sourceIP;
+	}
+	
 }

@@ -13,13 +13,16 @@ public class Rule {
 	// Either ACCEPT, REJECT, or DROP
 	private RuleType rule;
 	// Holds the device that is the sender of the packet
-	private Device source;
+	private int[] sourceIP;
+	private int netmask;
 	// Holds the protocol that is filtered (TCP/UDP)
 	private Packet.Protocol protocol;
 
-	public Rule(RuleType rule, Device source, Packet.Protocol protocol) {
+	public Rule(RuleType rule, int[] sourceIP, int netmask, 
+			Packet.Protocol protocol) {
 		this.rule = rule;
-		this.source = source;
+		this.sourceIP = sourceIP;
+		this.netmask = netmask;
 		this.protocol = protocol;
 	}
 	
@@ -28,8 +31,12 @@ public class Rule {
 		return rule;
 	}
 	
-	public Device getSource() {
-		return source;
+	public int[] getSourceIP() {
+		return sourceIP;
+	}
+	
+	public int getNetmask() {
+		return netmask;
 	}
 	
 	public Packet.Protocol getProtocol() {
