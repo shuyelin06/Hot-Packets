@@ -15,5 +15,10 @@ public class Settings {
 	
 	// Packet Speed
 	// Amount of units a packet moves every tick
-	public static float Packet_Speed = 0.15f;
+	public static float Packet_Speed = 0.45f;
+	
+	// Traffic Congestion
+	// Amount of packets a device will route every tick.
+	public static float Max_Traffic = 1.75f;
 }
+

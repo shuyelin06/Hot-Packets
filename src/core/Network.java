@@ -76,11 +76,16 @@ public class Network {
 	// Send Packet Method - Selects 2 Nodes to Send a Packet Between
 	public void sendPacket() {
 		int rand1 = (int) (Math.random() * devices.size());
-		int rand2 = (int) (Math.random() * 3 + 1);
+		int rand2 = (int) (Math.random() * 4 + 1);
 		
-		new Packet(
-				devices.get(rand1), devices.get(rand1).randomConnection(rand2),
-				Packet.Protocol.TCP);
+		Device source = devices.get(rand1);
+		Device destination = source.randomConnection(rand2);
+		
+		// Prevent a device from sending a packet to itself
+		if ( source != destination ) { 
+			new Packet(source, destination, Packet.Protocol.TCP);
+		}
+		
 	}
 	
 	// Update Method
@@ -92,6 +97,9 @@ public class Network {
 		// Update all Packets
 		for ( Packet p : packets ) {
 			p.update();
+		}
+		for ( Device d : devices ) {
+			d.update();
 		}
 		
 		// Clean-Up Dead Packets and Devices

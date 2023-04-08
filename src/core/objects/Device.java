@@ -1,6 +1,7 @@
 package core.objects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.newdawn.slick.Color;
@@ -15,7 +16,9 @@ import core.geometry.Vector;
 import core.protocols.FilterRule;
 import core.protocols.NatRule;
 import core.protocols.Rule;
+import engine.Settings;
 import engine.Simulation;
+import graphics.MessageBoard;
 
 /*
  * Device Class:
@@ -47,7 +50,13 @@ public class Device extends NetworkObject {
 	// Device Color Representation
 	private Color deviceColor;
 	
+	// Traffic - Controls how many packets
+	// a device can take at a time.
+	private float traffic;
+	
 	/* Device Statistics */
+	private MessageBoard messagesReceived; 	// Messages (Recently) Received
+	
 	private int packetsSent; // Packets Sent Through Device
 	private int packetsReceived; // Packets Received
 	
@@ -59,6 +68,9 @@ public class Device extends NetworkObject {
 		Network.getInstance().addDevice(this);
 		
 		// Statistics
+		messagesReceived = new MessageBoard(Color.green);
+		
+		packetsReceived = 0;
 		packetsSent = 0;
 		
 		// Set Postion
@@ -70,6 +82,8 @@ public class Device extends NetworkObject {
 		NatRules = new ArrayList<>();
 		connections = new ArrayList<>();
 		
+		traffic = 0f;
+		
 		name = "NULL";
 		
 		width = 7;
@@ -78,6 +92,8 @@ public class Device extends NetworkObject {
 		deviceColor = new Color((int) (Math.random() * 255),
 				(int) (Math.random() * 255), (int) (Math.random() * 255));
 	}
+	
+	public boolean congested() { return traffic < 1f; }
 	
 	public Color getColor() { return deviceColor; }
 	
@@ -139,15 +155,36 @@ public class Device extends NetworkObject {
 		return FilterRules.contains(rule);
 	}
 	
+	// Update Device
+	public void update() {
+		traffic += Settings.Max_Traffic;
+		if ( Settings.Max_Traffic > 1f) {
+			if ( traffic > Settings.Max_Traffic )
+				traffic = Settings.Max_Traffic;
+		} else {
+			if ( traffic > 1f ) 
+				traffic = 1f;
+		}
+		
+		messagesReceived.update();
+	}
 	// Protocol Method
 	// Performs a protocol on a packet that has reached it
 	/* Checks if the packet matches any rules and drops or accepts it based on
 	 * the rule matched
 	 */
 	public void protocol(Packet packet) {
+		// Decrease Traffic the Device Can Take by 1
+		traffic -= 1f;
+		
 		/* Increment Device Statistics */
-		if ( packet.getSource() == this ) { this.packetsSent++; } 
-		if ( packet.getDestination() == this ) { this.packetsReceived++; } 
+		if ( packet.getSource() == this ) { 
+			this.packetsSent++; 
+		} 
+		if ( packet.getDestination() == this ) {
+			messagesReceived.addMessage(packet.getMessage());
+			this.packetsReceived++; 
+		} 
 		
 		if (packet.getStatus() == Packet.Status.Lost) {
 			new Packet(packet.getSource(), packet.getDestination(), 
@@ -290,14 +327,18 @@ public class Device extends NetworkObject {
 			visited = new HashSet<Device>();
 		}
 		
+		// Randomize the pathfinding
+		Collections.shuffle(connections);
+		
 		for ( Device d : connections ) {
-			if ( visited != null && visited.contains(d) ) {
+			if (visited.contains(d) ) {
 				continue;
 			} else {
 				visited.add(d);
 				if ( d.routePacket(destination, visited) != null ) {
 					return d;
 				} 
+				visited.remove(d);
 			}
 			
 		}
@@ -354,12 +395,17 @@ public class Device extends NetworkObject {
 		for ( Device dest : connections ) {
 			drawEdge(dest, g);
 		}
+		
+		// Draw Received Messages
+		messagesReceived.render(g, 
+			Simulation.ScreenX(position.x + width / 2), 
+			Simulation.ScreenY(position.y + height / 2));
 	}
 	
 	// Draw Edge
 	private void drawEdge(Device d, Graphics g) {
 		g.setColor(new Color(211, 211, 211, 200));
-		g.setLineWidth(4);
+		g.setLineWidth(Settings.Pixels_Per_Unit / 2.5f);
 		
 		// Get direction to destination
 		Vector direction = position.directionTo(d.position);
