@@ -21,7 +21,7 @@ public abstract class NetworkObject {
 	protected int identifier;
 	
 	// Status Variable
-	public enum Status { Alive, Dead }
+	public enum Status { Alive, Dead, Lost }
 	protected Status status;
 	
 	// Position (Units)
@@ -48,6 +48,8 @@ public abstract class NetworkObject {
 	}
 	
 	// Getters
+	public Status getStatus() { return status; }
+	
 	public float getX() { return position.x; }
 	public float getY() { return position.y; }
 	
