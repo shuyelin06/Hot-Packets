@@ -39,8 +39,8 @@ public class Box {
 	// Rendering
 	public void draw(Graphics g) {
 		g.setColor(Color.gray);
-		g.fillRect(
-			Simulation.ScreenX(centerX), Simulation.ScreenY(centerY), 
-			Simulation.Screen(width), Simulation.Screen(height));
+		g.fillRect(centerX - width / 2, centerY - height / 2, width, height);
+		g.setColor(Color.black);
+		g.drawString("Testing", centerX, centerY);
 	}
 }

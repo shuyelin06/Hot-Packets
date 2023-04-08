@@ -1,5 +1,7 @@
 package engine;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -10,9 +12,12 @@ import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
 import core.Network;
+import core.NetworkObject;
 import core.geometry.Vector;
 import core.objects.Device;
 import core.objects.Packet;
+import graphics.Box;
+import graphics.boxes.InfoBox;
 import input.MousePanner;
 
 public class Simulation extends BasicGameState {
@@ -35,8 +40,18 @@ public class Simulation extends BasicGameState {
 	// Track User Input
 	private Input input;
 	
+	
 	// Tracks Mouse Panning
 	private MousePanner mousePanner;
+	
+	// Game Entity Selected
+	private NetworkObject selectedEntity;
+	
+	// Graphics
+	private ArrayList<Box> boxes;
+	private InfoBox infoBox; // Information Box 
+	private Box simulationBox; // Simulation (Settings) Box
+	private Box commandBox; // Command Box
 	
 	// Constructor
 	public Simulation(int id) { 
@@ -64,10 +79,40 @@ public class Simulation extends BasicGameState {
 	
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
+		// Initialize Boxes ArrayList (Graphics)
+		boxes = new ArrayList<>();
+		
+		infoBox = new InfoBox(); // Add InfoBox
+		infoBox
+			.setX(Settings.Screen_Width - 100)
+			.setY(475)
+			.setWidth(150)
+			.setHeight(200);
+		
+		simulationBox = new Box();
+		simulationBox
+			.setX(Settings.Screen_Width - 100)
+			.setY(200)
+			.setWidth(150)
+			.setHeight(300);
+		
+		commandBox = new Box() ;
+		commandBox
+			.setX(Settings.Screen_Width / 2)
+			.setY(Settings.Screen_Height * 0.9f)
+			.setWidth(Settings.Screen_Width * 0.95f)
+			.setHeight(Settings.Screen_Height * 0.15f);
+		
+		boxes.add(infoBox);
+		boxes.add(simulationBox);
+		boxes.add(commandBox);
+		
 		// Obtain User Input
 		input = arg0.getInput();
 		
 		mousePanner = new MousePanner(); // Initialize Mouse Panner
+		selectedEntity = null; // Set Selected Object to null
+		
 		
 		// Obtain Network
 		network = Network.getInstance();
@@ -109,13 +154,27 @@ public class Simulation extends BasicGameState {
 		g.setColor(Color.white);
 		g.drawOval(Settings.Screen_Width / 2, Settings.Screen_Height / 2, 20, 20);
 		
-		if ( input.isMouseButtonDown(Input.MOUSE_LEFT_BUTTON) ) {
-			g.drawOval(ScreenX(SimX(input.getMouseX())), ScreenY(SimY(input.getMouseY())), 20, 20);
+		// Draw Boxes
+		for ( Box b : boxes ) {
+			b.draw(g);
+		}
+		
+		if ( selectedEntity != null ) {
+			g.setColor(Color.yellow);
+			g.drawOval(
+					ScreenX(selectedEntity.getX()), ScreenY(selectedEntity.getY()), 
+					Screen(10), Screen(10));
 		}
 	}
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
+		if ( input.isMousePressed(Input.MOUSE_LEFT_BUTTON) ) {
+			selectedEntity = network.searchForObject(
+					Simulation.SimX(input.getMouseX()), Simulation.SimY(input.getMouseY()));
+//			System.out.println(selectedEntity);
+		}
+		
 		// Handes Mouse Panning (Grab and Move)
 		mousePanner.pan(input, center);
 		

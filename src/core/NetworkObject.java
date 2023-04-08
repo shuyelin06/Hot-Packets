@@ -59,6 +59,12 @@ public abstract class NetworkObject {
 	public void setStatus(Status status) { this.status = status; }
 	
 	// Helpers
+	// Returns true if network object contains some coordinate
+	public boolean atCoordinate(float x, float y) {
+		return (position.x - width / 2 < x) && (x < position.x + width / 2)
+				&& (position.y - height / 2 < y) && (y < position.y + height / 2);
+	}
+	
 	// Returns true if this device matches this identifier
 	public boolean isObject(int identifier) {
 		return this.identifier == identifier;
