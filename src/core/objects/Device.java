@@ -36,11 +36,15 @@ public class Device extends NetworkObject {
 	public Device(float x, float y) {
 		super();
 		
+		// Add to Network
+		Network.getInstance().addDevice(this);
+		
 		// Set Postion
 		position.x = x;
 		position.y = y;
 		
 		// Initialize Variables
+		rules = new ArrayList<>();
 		connections = new ArrayList<>();
 		
 		name = "NULL";

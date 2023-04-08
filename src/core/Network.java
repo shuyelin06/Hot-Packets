@@ -15,6 +15,16 @@ import core.objects.Packet;
  * simulation.
  */
 public class Network {
+	private static Network network = null;
+	
+	// Network Call
+	public static Network getInstance() {
+		if ( network == null ) {
+			network = new Network();
+		}
+		return network;
+	}
+	
 	// All devices in the network
 	private ArrayList<Device> devices;
 	
@@ -37,9 +47,9 @@ public class Network {
 		int rand1 = (int) (Math.random() * devices.size());
 		int rand2 = (int) (Math.random() * 3);
 		
-		packets.add(
-			new Packet(devices.get(rand1), devices.get(rand1).randomConnection(rand2))
-				);
+		new Packet(
+				devices.get(rand1), devices.get(rand1).randomConnection(rand2),
+				"TCP", this);
 	}
 	
 	// Update Method

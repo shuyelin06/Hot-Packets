@@ -27,6 +27,9 @@ public class Packet extends NetworkObject {
 	public Packet(Device source, Device destination, String protocol, Network network) {
 		super();
 		
+		// Add to Network
+		Network.getInstance().addPacket(this);
+		
 		// Set Variables
 		this.source = source;
 		this.destination = destination;

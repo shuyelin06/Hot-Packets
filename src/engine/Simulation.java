@@ -69,8 +69,8 @@ public class Simulation extends BasicGameState {
 		
 		mousePanner = new MousePanner(); // Initialize Mouse Panner
 		
-		// Initialize the network
-		network = new Network();
+		// Obtain Network
+		network = Network.getInstance();
 		
 		// Initialize Center
 		center = new Vector(30, 30);
@@ -96,13 +96,7 @@ public class Simulation extends BasicGameState {
 		four.addConnection(five);
 		five.addConnection(one);
 		
-		network.addDevice(one);
-		network.addDevice(two);
-		network.addDevice(three);
-		network.addDevice(four);
-		network.addDevice(five);
-		
-		network.addPacket(new Packet(one, two, "TCP", network));
+		new Packet(one, two, "TCP", network);
 	}
 
 	@Override
