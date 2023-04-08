@@ -19,7 +19,11 @@ public class CommandParser {
 	public enum CommandType {
 		PREROUTING,
 		POSTROUTING,
-		FILTER
+		FILTER,
+		CREATEDEVICE,
+		CREATECONNECTION,
+		SENDPACKET,
+		PING
 	}
 	// Instantiate with command to parse, as well as instantiating
 	// static variables
