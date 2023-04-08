@@ -56,6 +56,7 @@ public class CommandParser {
 	
 	// Returns true if command follows template, false if it doesn't
 	public boolean checkValidCommand() {
+		boolean isValid = true;
 		// check if user command length is same as template command length
 		 if (userCommandArray.length == commandArray.length + numArguments) {
 			 // checks if user command matches template command
@@ -63,10 +64,11 @@ public class CommandParser {
 				 String userCommandWord = userCommandArray[wordsToCheck.get(i)];
 				 // if user command doesn't match, return false
 				 if (!(userCommandWord.equals(commandArray[i])))
-					 return false;
+					 isValid = false;
 			 }
 		 }
+		 else isValid = false;
 		 
-		 return true;
+		 return isValid;
 	}
 }
