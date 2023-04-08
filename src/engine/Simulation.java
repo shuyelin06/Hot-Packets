@@ -184,20 +184,41 @@ public class Simulation extends BasicGameState {
 		// Start Tracking Time
 		time = System.currentTimeMillis();
 
-		/* Testing */
-//		Device one = new Device(5, 50);
+		/*Man-In-The-Middle*/
+		Device man = new Device(0, -30);
+		man.setIP(0, 0, 0, 0);
+		Device center = new Device(0,0);
+		center.setIP(1, 1, 1, 1);
+		Device left = new Device(-30,0);
+		left.setIP(2, 2, 2, 2);
+		Device right = new Device(30, 0);
+		right.setIP(3, 3, 3, 3);
+		
+		left.addConnection(center);
+		center.addConnection(man);
+		center.addConnection(right);
+		new Packet(left, right, Packet.Protocol.TCP);
+		
+		//blocking package from going to man in the middle
+		center.insertRule(FilterRule.RuleType.DROP, left.getIP(), 32, 
+				man.getIP(), 32, Packet.Protocol.TCP);
+
+		
+		
+		/* Big Web */
+//		Device one = new Device(-65, 10);
 //		one.setIP(1, 2, 3, 4);
-//		Device two = new Device(45, 75);
+//		Device two = new Device(-25, 35);
 //		two.setIP(1, 3, 5, 7);
-//		Device three = new Device(70, 30);
+//		Device three = new Device(0, -10);
 //		three.setIP(1, 1, 2, 3);
-//		Device four = new Device(100, 45);
+//		Device four = new Device(30, 5);
 //		four.setIP(2, 4, 6, 8);
-//		Device five = new Device(120, 70);
+//		Device five = new Device(50, 30);
 //		five.setIP(3, 6, 9, 12);
-//		Device six = new Device(70, 70);
+//		Device six = new Device(0, 30);
 //		six.setIP(4, 2, 1, 2);
-//		Device seven = new Device(20,30);
+//		Device seven = new Device(-50,-10);
 //		seven.setIP(5, 2, 4, 2);
 //  		
 //		two.insertRule(FilterRule.RuleType.DROP, one.getIP(), 32, 
@@ -222,39 +243,44 @@ public class Simulation extends BasicGameState {
 //		
 //		new Packet(one, six, Packet.Protocol.TCP);
 		
-		Device centrality = new Device(0,0);
-		centrality.setIP(10, 10, 10, 10);
+		/* Central Node */
+//		Device centrality = new Device(0,0);
+//		centrality.setIP(10, 10, 10, 10);
+//		
+//		Device one = new Device(-45,20);
+//		Device two = new Device(-45,10);
+//		Device three = new Device(-45,0);
+//		Device four = new Device(-45,-10);
+//		Device five = new Device(-45,-20);
+//		
+//		one.addConnection(centrality);
+//		one.setIP(0, 0, 0, 0);
+//		two.addConnection(centrality);
+//		two.setIP(1, 1, 1, 1);
+//		three.addConnection(centrality);
+//		three.setIP(2, 2, 2, 2);
+//		four.addConnection(centrality);
+//		four.setIP(3, 3, 3, 3);
+//		five.addConnection(centrality);
+//		five.setIP(4, 4, 4, 4);
+//		
+//		Device output = new Device(20,0);
+//		output.setIP(5, 5, 5, 5);
+//		centrality.addConnection(output);
+//		
+//		Device clientOne = new Device(35,15);
+//		clientOne.setIP(6, 6, 6, 6);
+//		Device clientTwo = new Device(35,-15);
+//		clientTwo.setIP(7, 7, 7, 7);
+//		
+//		output.addConnection(clientOne);
+//		output.addConnection(clientTwo);
+//		
+//		centrality.insertRule(RuleType.DROP, one.getIP(), 32, centrality.getIP(), 0, Protocol.TCP);
 		
-		Device one = new Device(-45,20);
-		Device two = new Device(-45,10);
-		Device three = new Device(-45,0);
-		Device four = new Device(-45,-10);
-		Device five = new Device(-45,-20);
+		/* Middle-Man-Attack */
 		
-		one.addConnection(centrality);
-		one.setIP(0, 0, 0, 0);
-		two.addConnection(centrality);
-		two.setIP(1, 1, 1, 1);
-		three.addConnection(centrality);
-		three.setIP(2, 2, 2, 2);
-		four.addConnection(centrality);
-		four.setIP(3, 3, 3, 3);
-		five.addConnection(centrality);
-		five.setIP(4, 4, 4, 4);
 		
-		Device output = new Device(20,0);
-		output.setIP(5, 5, 5, 5);
-		centrality.addConnection(output);
-		
-		Device clientOne = new Device(35,15);
-		clientOne.setIP(6, 6, 6, 6);
-		Device clientTwo = new Device(35,-15);
-		clientTwo.setIP(7, 7, 7, 7);
-		
-		output.addConnection(clientOne);
-		output.addConnection(clientTwo);
-		
-		centrality.insertRule(RuleType.DROP, one.getIP(), 32, centrality.getIP(), 0, Protocol.TCP);
 		
 	}
 
