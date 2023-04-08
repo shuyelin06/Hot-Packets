@@ -27,6 +27,10 @@ public class Packet extends NetworkObject {
 		// Set Position
 		this.position = source.getPosition();
 		
+		// Set Width and Height
+		this.width = 0.5f;
+		this.height = 0.5f;
+		
 		// Temp
 		source.protocol(this);
 	}
@@ -41,6 +45,11 @@ public class Packet extends NetworkObject {
 	
 	// Packet Update
 	public void update() {
+		if ( tempDestination == null ) {
+			status = Status.Dead;
+			return;
+		}
+		
 		// Obtain Direction to Destination
 		Vector direction = position.directionTo(tempDestination.getPosition());
 		
@@ -52,7 +61,7 @@ public class Packet extends NetworkObject {
 		position.y += speed.y;
 	
 		// When Packet Reaches Destination
-		if ( position.distance(tempDestination.getPosition()) < 2.5f ) {
+		if ( position.distance(tempDestination.getPosition()) < 1f ) {
 			tempDestination.protocol(this);
 		}
 	}

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Graphics;
 
+import core.NetworkObject.Status;
 import core.objects.Device;
 import core.objects.Packet;
 
@@ -31,12 +32,26 @@ public class Network {
 	// Add a Packet
 	public void addPacket(Packet p) { packets.add(p); }
 	
+	// Send Packet Method - Selects 2 Nodes to Send a Packet Between
+	public void sendPacket() {
+		int rand1 = (int) (Math.random() * devices.size());
+		int rand2 = (int) (Math.random() * 3);
+		
+		packets.add(
+			new Packet(devices.get(rand1), devices.get(rand1).randomConnection(rand2))
+				);
+	}
+	
 	// Update Method
 	public void update() {
 		// Update all Packets
 		for ( Packet p : packets ) {
 			p.update();
 		}
+		
+		// Clean-Up Dead Packets and Devices
+		packets.removeIf(p -> (p.status == Status.Dead));
+		devices.removeIf(d -> (d.status == Status.Dead));
 	}
 	
 	// Draw Method

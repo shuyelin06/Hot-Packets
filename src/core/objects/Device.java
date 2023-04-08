@@ -1,6 +1,7 @@
 package core.objects;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
@@ -49,42 +50,52 @@ public class Device extends NetworkObject {
 	// Protocol Method
 	// Performs a protocol on a packet that has reached it
 	public void protocol(Packet packet) {
-		Device next = nextDevice(packet.getDestination());
+		Device next;
+		
+		if ( packet.getDestination() == this ) {
+			next = null;
+		} else {
+			next = routePacket(packet.getDestination(), null);
+		}
+		
 		packet.nextDevice(next);
 	}
 	
-	//
-	public Device nextDevice(Device destination) {
-	ArrayList<Device> potential = new ArrayList<Device>();
-	ArrayList<Device> traveled = new ArrayList<Device>();
-	traveled.add(this);
-		for(int i = 0; i < connections.size(); i++) {
-			if(nextDeviceAux(connections.get(i), destination, traveled)) {
-				potential.add(connections.get(i));
-			}
-		}
-		return potential.get((int) (0));
-	}
-	
-	private boolean nextDeviceAux(Device curr, Device destination, ArrayList<Device> traveled) {
-		boolean notTraveled = true;		
-		for(int i = 0; i < curr.connections.size(); i++) {
-			for(int j = 0; j < traveled.size(); j++) {
-				if (traveled.get(j).equals(curr.connections.get(i))) {
-					notTraveled = false;
-				}
-			}
-			if(curr.connections.get(i).equals(destination) && notTraveled) {
-				return true;
-			} else if (!notTraveled){
-				continue;
-			} else {
-				traveled.add(this);
-				nextDeviceAux(curr.connections.get(i), destination, traveled);
-			}
+	// Returns the next device to send the packet to 
+	public Device routePacket(Device destination, HashSet<Device> visited) {
+		// Base Case: Check if We've Found Destination
+		if ( this == destination ) {
+			return this;
 		}
 		
-		return true;
+		if ( visited == null ) {
+			visited = new HashSet<Device>();
+		}
+		
+		for ( Device d : connections ) {
+			if ( visited != null && visited.contains(d) ) {
+				continue;
+			} else {
+				visited.add(d);
+				if ( d.routePacket(destination, visited) != null ) {
+					return d;
+				} 
+			}
+			
+		}
+		
+		return null;	
+	}
+
+	// Returns a Random Node this Node is Connected to
+	// Depth controls how long these connections can be
+	public Device randomConnection(int depth) {
+		if ( depth == 0 || connections.size() == 0 ) {
+			return this;
+		}
+		
+		int random = (int) (Math.random() * connections.size());
+		return connections.get(random).randomConnection(depth - 1);
 	}
 	
 	// Draw Method
@@ -98,7 +109,7 @@ public class Device extends NetworkObject {
 			Simulation.Screen(width), Simulation.Screen(height));
 		
 		// Draw Connection
-		g.setColor(Color.green);
+		g.setColor(new Color(211, 211, 211, 100));
 		for ( Device dest : connections ) {
 			g.drawLine(
 					Simulation.ScreenX(position.x), Simulation.ScreenY(position.y), 
