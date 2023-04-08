@@ -5,6 +5,8 @@ import java.util.HashSet;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 
 import core.Network;
 import core.NetworkObject;
@@ -29,6 +31,11 @@ public class Device extends NetworkObject {
 	private String name;
 	private String ip;
 	
+	// Device image (same for every device object)
+	private static Image device_image;
+	private static Image scaledDeviceImg;
+	
+	
 	// Get Connections
 	public ArrayList<Device> getConnections() { return connections; }
 	
@@ -49,6 +56,9 @@ public class Device extends NetworkObject {
 		
 		name = "NULL";
 		ip = "NULL";
+		
+		width = 7;
+		height = 7;
 	}
 	
 	// Adds an Outgoing Connection
@@ -189,15 +199,30 @@ public class Device extends NetworkObject {
 
 	}
 	
+	// Instantiate device image
+	public static Image get_image() {
+		if ( device_image == null ) {
+			try {
+				device_image = new Image("res/Device.png");
+				scaledDeviceImg = device_image.getScaledCopy(
+						(int)Simulation.Screen(7), (int)Simulation.Screen(7));
+			} catch (SlickException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return device_image;
+	}
+	
 	// Draw Method
 	@Override
 	public void draw(Graphics g) {
-		// Draw Device (Circle)
-		g.setColor(Color.blue);
-		g.drawOval(
-			Simulation.ScreenX(position.x - width / 2), 
-			Simulation.ScreenY(position.y + height / 2), 
-			Simulation.Screen(width), Simulation.Screen(height));
+		// Instantiate device image
+		get_image();
+		// Draw device (device drawing)
+		g.drawImage(scaledDeviceImg, 
+				Simulation.ScreenX(position.x - width / 2), 
+				Simulation.ScreenY(position.y + height / 2));
 		
 		// Draw Connection
 		for ( Device dest : connections ) {
@@ -234,5 +259,4 @@ public class Device extends NetworkObject {
 				Simulation.ScreenX(arrowEndX + point2.x), 
 				Simulation.ScreenY(arrowEndY + point2.y));
 	}
-	
 }

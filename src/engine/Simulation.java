@@ -117,14 +117,13 @@ public class Simulation extends BasicGameState {
 		// Handes Mouse Panning (Grab and Move)
 		mousePanner.pan(input, center);
 		
-		if ( arg0.getAlwaysRender())
-		
 		if ( arg0.getInput().isKeyDown(Input.KEY_Z) ) {
 			Settings.Pixels_Per_Unit -= 0.15f;
 		}
 		if ( arg0.getInput().isKeyDown(Input.KEY_X) ) {
 			Settings.Pixels_Per_Unit += 0.15f;
 		}
+    
 		// Update Simulation
 		if ( arg0.getInput().isKeyDown(Input.KEY_P) ) {
 			network.sendPacket();
