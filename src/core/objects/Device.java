@@ -99,6 +99,11 @@ public class Device extends NetworkObject {
 		
 		// Draw Connection
 		g.setColor(Color.green);
+		for ( Device dest : connections ) {
+			g.drawLine(
+					Simulation.ScreenX(position.x), Simulation.ScreenY(position.y), 
+					Simulation.ScreenX(dest.position.x), Simulation.ScreenY(dest.position.y));
+		}
 	}
 	
 }

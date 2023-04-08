@@ -42,18 +42,17 @@ public class Packet extends NetworkObject {
 	// Packet Update
 	public void update() {
 		// Obtain Direction to Destination
-		Vector direction = Vector.VectorDifference(position, 
-					tempDestination.getPosition());
-		// Normalize and Multiply by Speed
-		Vector speed = direction.scalarMultiply(Settings.Packet_Speed / direction.magnitude());
+		Vector direction = position.directionTo(tempDestination.getPosition());
+		
+		// Obtain Speed of Packet
+		Vector speed = direction.scalarMultiply(Settings.Packet_Speed);
 		
 		// Move to Destination
 		position.x += speed.x;
 		position.y += speed.y;
 	
 		// When Packet Reaches Destination
-		boolean reached = false;
-		if ( Vector.Distance(position, tempDestination.getPosition()) < 2.5f ) {
+		if ( position.distance(tempDestination.getPosition()) < 2.5f ) {
 			tempDestination.protocol(this);
 		}
 	}

@@ -1,5 +1,6 @@
 package engine;
 
+import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Input;
@@ -33,9 +34,9 @@ public class Simulation extends BasicGameState {
 	public static float Screen(float val) 
 		{ return val * Settings.Pixels_Per_Unit; }
 	public static float ScreenX(float x) 
-		{ return (x - center.x) * Settings.Pixels_Per_Unit; }
+		{ return (x - center.x) * Settings.Pixels_Per_Unit + Settings.Screen_Width / 2; }
 	public static float ScreenY(float y) 
-		{ return (Settings.Screen_Height) - (y - center.y) * Settings.Pixels_Per_Unit;}
+		{ return (Settings.Screen_Height * 0.5f) - (y - center.y) * Settings.Pixels_Per_Unit;}
 	
 	@Override
 	public int getID() { return id; }
@@ -46,7 +47,7 @@ public class Simulation extends BasicGameState {
 		network = new Network();
 		
 		// Initialize Center
-		center = new Vector(0,0);
+		center = new Vector(30, 30);
 		
 		// Start Tracking Time
 		time = System.currentTimeMillis();
@@ -59,7 +60,7 @@ public class Simulation extends BasicGameState {
 		
 		one.addConnection(two);
 		two.addConnection(three);
-//		three.addConnection(four);
+		three.addConnection(four);
 		
 		two.addConnection(four);
 		
@@ -69,13 +70,16 @@ public class Simulation extends BasicGameState {
 		network.addDevice(four);
 		
 		
-		network.addPacket(new Packet(one, four));
+//		network.addPacket(new Packet(one, four));
 	}
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
 		// Render Simulation
 		network.draw(g);
+		
+		g.setColor(Color.white);
+		g.drawOval(Settings.Screen_Width / 2, Settings.Screen_Height / 2, 20, 20);
 	}
 
 	@Override
