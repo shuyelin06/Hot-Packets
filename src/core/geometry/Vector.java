@@ -31,11 +31,6 @@ public class Vector {
 	// Vector Magnitude
 	public float magnitude() { return (float) Math.sqrt(x * x + y * y); };
 	
-	// Vector Difference between Two Vectors
-	public static Vector VectorDifference(Vector from, Vector to) {
-		return new Vector(to.x - from.x, to.y - from.y);
-	}
-	
 	// Multiplies a Vector by a Scalar
 	public Vector scalarMultiply(float scale) {
 		return new Vector(x * scale, y * scale);
@@ -49,4 +44,16 @@ public class Vector {
 	
 	// Returns a Copy of the Vector
 	public Vector copy() { return new Vector(this); }
+		
+	// Distance to Another Vector
+	public float distance(Vector v2) {
+		return (float) Math.sqrt((v2.x - x) * (v2.x - x) + 
+							(v2.y - y) * (v2.y - y));
+	}
+	// Direction to Another Vector
+	public Vector directionTo(Vector to) {
+		return new Vector(to.x - x, to.y - y).normalize();
+	}
+	
+	
 }

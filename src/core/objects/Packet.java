@@ -36,26 +36,41 @@ public class Packet extends NetworkObject {
 		// Set Position
 		this.position = source.getPosition();
 		
+		// Set Width and Height
+		this.width = 0.5f;
+		this.height = 0.5f;
+		
 		// Temp
-		this.tempDestination = destination;
+		source.protocol(this);
 	}
 	
+	// Gets Destination
+	public Device getDestination() { return destination; }
+	
+	// Sets the Next Device to Travel to
+	public void nextDevice(Device d) {
+		tempDestination = d;
+	}
 	
 	// Packet Update
 	public void update() {
+		if ( tempDestination == null ) {
+			status = Status.Dead;
+			return;
+		}
+		
 		// Obtain Direction to Destination
-		Vector direction = Vector.VectorDifference(position, 
-					tempDestination.getPosition());
-		// Normalize and Multiply by Speed
-		Vector speed = direction.scalarMultiply(Settings.Packet_Speed / direction.magnitude());
+		Vector direction = position.directionTo(tempDestination.getPosition());
+		
+		// Obtain Speed of Packet
+		Vector speed = direction.scalarMultiply(Settings.Packet_Speed);
 		
 		// Move to Destination
 		position.x += speed.x;
 		position.y += speed.y;
 	
 		// When Packet Reaches Destination
-		boolean reached = false;
-		if ( reached ) {
+		if ( position.distance(tempDestination.getPosition()) < 1f ) {
 			tempDestination.protocol(this);
 		}
 	}
