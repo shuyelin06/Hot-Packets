@@ -166,4 +166,12 @@ public class Packet extends NetworkObject {
 		return destIP;
 	}
 	
+	public void setSourceIP(int[] ip) {
+		sourceIP = ip;
+	}
+	
+	public void setDestIP(int[] ip) {
+		destIP = ip;
+	}
+	
 }

@@ -13,6 +13,7 @@ import core.NetworkObject;
 import core.NetworkObject.Status;
 import core.geometry.Vector;
 import core.protocols.FilterRule;
+import core.protocols.NatRule;
 import core.protocols.Rule;
 import engine.Simulation;
 
@@ -29,6 +30,8 @@ public class Device extends NetworkObject {
 	
 	// List of iptable filter rules
 	private ArrayList<FilterRule> FilterRules;
+	
+	private ArrayList<NatRule> NatRules;
 	
 	// Device Information
 	private String name;
@@ -64,6 +67,7 @@ public class Device extends NetworkObject {
 		
 		// Initialize Variables
 		FilterRules = new ArrayList<>();
+		NatRules = new ArrayList<>();
 		connections = new ArrayList<>();
 		
 		name = "NULL";
@@ -151,6 +155,7 @@ public class Device extends NetworkObject {
 			packet.setStatus(Status.Dead);
 		}
 	
+		// applies filter rules if applicable
 	    for (FilterRule curRule : FilterRules) {
 	        // if there is a matching rule
 	        if (hasMatchingIP(packet, curRule) &&
@@ -191,6 +196,9 @@ public class Device extends NetworkObject {
 	        break;
 	      }
 	    
+	    // applies nat rules if applicable
+	    applyNatRule(packet);
+	    
 
 		Device next;
 		
@@ -201,6 +209,44 @@ public class Device extends NetworkObject {
 		}
 		
 		packet.nextDevice(next);
+	}
+	
+	public void applyNatRule(Packet packet) {
+		for (NatRule rule : NatRules) {
+			int[] oldIP = rule.getOldIP();
+			boolean match = true;
+			
+			// SNAT
+			if (rule.getNatType() == NatRule.NatType.SNAT) {
+				int[] packetIP = packet.getSourceIP();
+				
+				// Checks if IPs match
+				for (int i = 0; i < oldIP.length; i++) {
+					if (oldIP[i] != packetIP[i])
+						match = false;
+				}
+				// IPs match, need to perform snat
+				if (match) {
+					packet.setSourceIP(rule.getNewIP());
+					return;
+				}
+				
+			// DNAT
+			} else if (rule.getNatType() == NatRule.NatType.DNAT) {
+				int[] packetIP = packet.getDestIP();
+				
+				// Checks if IPs match
+				for (int i = 0; i < oldIP.length; i++) {
+					if (oldIP[i] != packetIP[i])
+						match = false;
+				}
+				// IPs match, need to perform dnat
+				if (match) {
+					packet.setDestIP(rule.getNewIP());
+					return;
+				}
+			}
+		}
 	}
 	
 	// Checks if the ip of the packet matches the ip of the rule, for both
