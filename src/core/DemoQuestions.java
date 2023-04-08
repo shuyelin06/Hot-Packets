@@ -85,7 +85,7 @@ public class DemoQuestions {
 		));
 	
 	public static final ArrayList<String> Money = new ArrayList<String>(
-			Arrays.asList("$$"));
+			Arrays.asList("$$$"));
 			
 
 	
