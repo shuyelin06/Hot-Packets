@@ -30,4 +30,5 @@ public class MousePanner {
 		mouseX = input.getMouseX();
 		mouseY = input.getMouseY();
 	}
+	
 }
