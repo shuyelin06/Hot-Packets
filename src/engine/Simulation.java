@@ -14,8 +14,8 @@ import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
-import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
+import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.gui.TextField;	
 
 import core.Network;
@@ -24,6 +24,7 @@ import core.objects.Device;
 import core.objects.Packet;
 import graphics.Box;
 import graphics.Text_Input;
+import graphics.boxes.CommandBox;
 import graphics.boxes.InfoBox;
 import graphics.boxes.MouseBox;
 import graphics.boxes.SliderBox;
@@ -77,11 +78,6 @@ public class Simulation extends BasicGameState {
 	// Track User Input
 	private Input input;
 
-	// Create a TextFile for command
-	private TextField text;
-	private TextField prompt;
-	private UnicodeFont font = getNewFont("Courier New " , 37);
-
 	// Track Commands
 	private Text_Input commands;
 
@@ -90,7 +86,7 @@ public class Simulation extends BasicGameState {
 	private MouseBox mouseBox; // MouseBox (Handles Mouse Panning)
 	private InfoBox infoBox; // Information Box (Displays Information)
 	private SliderBox simulationBox; // Simulation (Settings) Box
-	private Box commandBox; // Command Box
+	private CommandBox commandBox; // Command Box
 
 	// Constructor
 	public Simulation(int id) { 
@@ -99,13 +95,6 @@ public class Simulation extends BasicGameState {
 	
 	@Override
 	public int getID() { return id; }
-
-	public UnicodeFont getNewFont(String fontName , int fontSize){
-		UnicodeFont returnFont = new UnicodeFont(new Font(fontName , Font.PLAIN , fontSize));
-		returnFont.addAsciiGlyphs();
-		returnFont.getEffects().add(new ColorEffect(java.awt.Color.green));
-		return returnFont;
-	}	
 
 	@Override
 	public void init(GameContainer arg0, StateBasedGame arg1) throws SlickException {
@@ -118,16 +107,7 @@ public class Simulation extends BasicGameState {
 		// Initialize Center
 		center = new Vector(30, 30);
 				
-		// Load Fonts and Commands
-		font.loadGlyphs();
-		text = new TextField(arg0,font, 46,
-				((int)( Settings.Screen_Height * 0.825f)),
-				((int)( Settings.Screen_Width * 0.97f)),
-				((int)( Settings.Screen_Height * 0.25f)));
-		prompt = new TextField(arg0,font, 46,
-				(7),
-				(900),
-				((int)( Settings.Screen_Height * 0.25f)));
+		
 		commands = new Text_Input();
 		
 		// Set Simulation Mode
@@ -160,12 +140,12 @@ public class Simulation extends BasicGameState {
 			.setHeight(300)
 			.initialize();
 		
-		commandBox = new SliderBox() ;
+		commandBox = new CommandBox(arg0, input);
 		commandBox
 			.setX(Settings.Screen_Width / 2)
 			.setY(Settings.Screen_Height * 0.9f)
 			.setWidth(Settings.Screen_Width * 0.95f)
-			.setHeight(Settings.Screen_Height * 0.15f)
+			.setHeight(Settings.Screen_Height * 0.055f)
 			.initialize();
 		
 		boxes.add(mouseBox);
@@ -209,34 +189,12 @@ public class Simulation extends BasicGameState {
 		for ( Box b : boxes ) {
 			b.draw(g);
 		}
-		
-		// Render Command Prompt
-		g.setColor(Color.lightGray);
-		g.setColor(Color.green);
-		prompt.setText("~:");
-		prompt.render(arg0, g);
-		text.setLocation(6, 900);
-		text.render(arg0, g);
+
 	}
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {	
 		/* Process User Keyboard Input */
-		// Command ENTER
-		if( arg0.getInput().isKeyPressed(Input.KEY_ENTER)) {
-			commands.addCommand(text.getText());
-			text.setText("");
-		}
-		
-		// Zoom Out Z
-		if ( arg0.getInput().isKeyDown(Input.KEY_Z) ) {
-			Settings.Pixels_Per_Unit -= 0.15f;
-		}
-		// Zoom in X
-		if ( arg0.getInput().isKeyDown(Input.KEY_X) ) {
-			Settings.Pixels_Per_Unit += 0.15f;
-		}
-
 		// Packet Generating P
 		if ( arg0.getInput().isKeyDown(Input.KEY_P) ) {
 			network.sendPacket();
