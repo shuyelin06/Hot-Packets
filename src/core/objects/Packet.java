@@ -3,6 +3,7 @@ package core.objects;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import core.Network;
 import core.NetworkObject;
 import core.geometry.Vector;
 import engine.Settings;
@@ -13,19 +14,34 @@ public class Packet extends NetworkObject {
 	private Device source;
 	private Device destination;
 	
+	// Protocol used to send packet (TCP or UDP)
+	private String protocol;
+	
+	// Network that packet belongs to
+	private Network network;
+	
 	// Device Packet is Currently Traveling to
 	private Device tempDestination;
 	
 	// Constructor
-	public Packet(Device source, Device destination) {
+	public Packet(Device source, Device destination, String protocol, Network network) {
 		super();
+		
+		// Add to Network
+		Network.getInstance().addPacket(this);
 		
 		// Set Variables
 		this.source = source;
 		this.destination = destination;
+		this.protocol = protocol;
+		this.network = network;
 		
 		// Set Position
 		this.position = source.getPosition();
+		
+		// Set Width and Height
+		this.width = 0.5f;
+		this.height = 0.5f;
 		
 		// Temp
 		source.protocol(this);
@@ -41,6 +57,11 @@ public class Packet extends NetworkObject {
 	
 	// Packet Update
 	public void update() {
+		if ( tempDestination == null ) {
+			status = Status.Dead;
+			return;
+		}
+		
 		// Obtain Direction to Destination
 		Vector direction = position.directionTo(tempDestination.getPosition());
 		
@@ -52,7 +73,7 @@ public class Packet extends NetworkObject {
 		position.y += speed.y;
 	
 		// When Packet Reaches Destination
-		if ( position.distance(tempDestination.getPosition()) < 2.5f ) {
+		if ( position.distance(tempDestination.getPosition()) < 1f ) {
 			tempDestination.protocol(this);
 		}
 	}
@@ -64,5 +85,15 @@ public class Packet extends NetworkObject {
 		g.drawRect(Simulation.ScreenX(position.x - width / 2), 
 				Simulation.ScreenY(position.y + height / 2), 
 				Simulation.Screen(width), Simulation.Screen(height));
+	}
+	
+	/* Returns the source device of this packet
+	 */
+	public Device getSource() {
+		return source;
+	}
+	
+	public String getProtocol() {
+		return protocol;
 	}
 }

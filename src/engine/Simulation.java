@@ -16,7 +16,12 @@ import core.objects.Packet;
 import input.MousePanner;
 
 public class Simulation extends BasicGameState {
+	// ID of GameState (IGNORE)
 	private int id;
+	
+	// Simulation Mode 
+	public enum Mode { Random, User }
+	private Mode simulationMode;
 	
 	// Center of the Simulation
 	static private Vector center;
@@ -64,8 +69,8 @@ public class Simulation extends BasicGameState {
 		
 		mousePanner = new MousePanner(); // Initialize Mouse Panner
 		
-		// Initialize the network
-		network = new Network();
+		// Obtain Network
+		network = Network.getInstance();
 		
 		// Initialize Center
 		center = new Vector(30, 30);
@@ -73,25 +78,25 @@ public class Simulation extends BasicGameState {
 		// Start Tracking Time
 		time = System.currentTimeMillis();
 		
+		// Set Simulation Mode
+		simulationMode = Mode.Random;
+		
 		// Testing
 		Device one = new Device(5, 50);
 		Device two = new Device(45, 75);
 		Device three = new Device(70, 30);
 		Device four = new Device(100, 45);
+		Device five = new Device(120, 70);
 		
 		one.addConnection(two);
 		two.addConnection(three);
-		three.addConnection(four);
+//		three.addConnection(four);
 		
 		two.addConnection(four);
+		four.addConnection(five);
+		five.addConnection(one);
 		
-		network.addDevice(one);
-		network.addDevice(two);
-		network.addDevice(three);
-		network.addDevice(four);
-		
-		
-//		network.addPacket(new Packet(one, four));
+		new Packet(one, two, "TCP", network);
 	}
 
 	@Override
@@ -112,7 +117,7 @@ public class Simulation extends BasicGameState {
 		// Handes Mouse Panning (Grab and Move)
 		mousePanner.pan(input, center);
 		
-		
+		if ( arg0.getAlwaysRender())
 		
 		if ( arg0.getInput().isKeyDown(Input.KEY_Z) ) {
 			Settings.Pixels_Per_Unit -= 0.15f;
@@ -121,20 +126,15 @@ public class Simulation extends BasicGameState {
 			Settings.Pixels_Per_Unit += 0.15f;
 		}
 		// Update Simulation
-		if ( arg0.getInput().isKeyDown(Input.KEY_A) ) {
-			center.x -= 0.5f;
-		}
-		if ( arg0.getInput().isKeyDown(Input.KEY_D) ) {
-			center.x += 0.5f;
-		}
-		if ( arg0.getInput().isKeyDown(Input.KEY_S) ) {
-			center.y -= 0.5f;
-		}
-		if ( arg0.getInput().isKeyDown(Input.KEY_W) ) {
-			center.y += 0.5f;
+		if ( arg0.getInput().isKeyDown(Input.KEY_P) ) {
+			network.sendPacket();
 		}
 		
 		float timeDifference = (System.currentTimeMillis() - time) / 1000f;
+		
+		if ( timeDifference > 1 / Settings.Ticks_Per_Second ) {
+			time = System.currentTimeMillis();
+		}
 		
 		while ( timeDifference > 1 / Settings.Ticks_Per_Second ) {
 			network.update();
@@ -142,6 +142,6 @@ public class Simulation extends BasicGameState {
 			timeDifference -= 1 / Settings.Ticks_Per_Second;
 		}
 		
-		time = System.currentTimeMillis();
+		
 	}
 }
