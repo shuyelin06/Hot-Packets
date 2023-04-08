@@ -44,6 +44,19 @@ public class Simulation extends BasicGameState {
 		return simulation;
 	}
 	
+	// Convert from IP String to IP Array
+	public static int[] ArrayIP(String ip) {
+		int[] convertedIP = new int[4];
+		String[] split = ip.split(".");
+		
+		convertedIP[0] = Integer.parseInt(split[0]);
+		convertedIP[1] = Integer.parseInt(split[1]);
+		convertedIP[2] = Integer.parseInt(split[2]);
+		convertedIP[3] = Integer.parseInt(split[3]);
+		
+		return convertedIP;
+	}
+	
 	// Convert from Simulation to Screen Coordinates
 	public static float Screen(float val) 
 		{ return val * Settings.Pixels_Per_Unit; }
