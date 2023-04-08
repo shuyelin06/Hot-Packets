@@ -29,7 +29,6 @@ public class ExampleScene extends BasicGameState {
 		
 		x++;
 		y++;
-		
 		arg2.drawRect(50, 50, 20 + x, 20 + y);
 	}
 
