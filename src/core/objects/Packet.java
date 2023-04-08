@@ -20,14 +20,16 @@ public class Packet extends NetworkObject {
 	private Device source;
 	private Device destination;
 	
+	private int[] sourceIP;
+	
 	// Protocol used to send packet (TCP or UDP)
-	private String protocol;
+	private Protocol protocol;
 	
 	// Device Packet is Currently Traveling to
 	private Device tempDestination;
 	
 	// Constructor
-	public Packet(Device source, Device destination, String protocol, Network network) {
+	public Packet(Device source, Device destination, Protocol protocol, Network network) {
 		super();
 		
 		// Add to Network
@@ -37,6 +39,8 @@ public class Packet extends NetworkObject {
 		this.source = source;
 		this.destination = destination;
 		this.protocol = protocol;
+		
+		sourceIP = source.getIP();
 		
 		// Set Position
 		this.position = source.getPosition();
@@ -63,6 +67,12 @@ public class Packet extends NetworkObject {
 			status = Status.Dead;
 			return;
 		}
+		
+		// 15% chance of packet getting lost
+        if (Math.random() < 0.001) {
+        	setStatus(Status.Dead);
+          return;
+        }
 		
 		// Obtain Direction to Destination
 		Vector direction = position.directionTo(tempDestination.getPosition());
@@ -100,13 +110,19 @@ public class Packet extends NetworkObject {
 		return source;
 	}
 	
-	public String getProtocol() {
+	public Protocol getProtocol() {
 		return protocol;
 	}
 	
+
 	// Gets an Array of Strings Describing the Device
 	public void getInfo(ArrayList<String> info) {
 		info.add("Packet");
 		info.add("==========");
 	}
+
+	public int[] getSourceIP() {
+		return sourceIP;
+	}
+	
 }

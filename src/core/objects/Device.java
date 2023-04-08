@@ -21,6 +21,7 @@ import engine.Simulation;
  * in the graph.
  */
 public class Device extends NetworkObject {
+	
 	// List of Outward Connections (Can Send Data to)
 	private ArrayList<Device> connections;
 	
@@ -29,7 +30,7 @@ public class Device extends NetworkObject {
 	
 	// Device Information
 	private String name;
-	private String ip;
+	private int[] ip = new int[5];
 	
 	// Device image (same for every device object)
 	private static Image device_image;
@@ -57,7 +58,6 @@ public class Device extends NetworkObject {
 		connections = new ArrayList<>();
 		
 		name = "NULL";
-		ip = "NULL";
 		
 		width = 7;
 		height = 7;
@@ -78,22 +78,41 @@ public class Device extends NetworkObject {
 	// Adds an Outgoing Connection
 	public void addConnection(Device d) {
 		connections.add(d);
-  }
+	}
+	
+	// Sets the IP
+	public void setIP(int a1, int a2, int a3, int a4) {
+		ip[0] = a1;
+		ip[1] = a2;
+		ip[2] = a3;
+		ip[3] = a4;
+	}
+	
+	public int[] getIP() {
+		return ip;
+	}
   
 	/* inserts a rule to the top of the iptable of this device
 	 */
-	public void insertRule(String rule, Device source, String protocol) {
-		Rule newRule = new Rule(rule, source, protocol);
+	public void insertRule(Rule.RuleType rule, int[] sourceIP, int netmask,
+			Packet.Protocol protocol) {
+		Rule newRule = new Rule(rule, sourceIP, netmask, protocol);
 		if (!hasRule(newRule))
 			rules.add(0, newRule);
 	}
 	
 	/* Appends a rule to the end of the iptable of this device
 	 */
-	public void appendRule(String rule, Device source, String protocol) {
-		Rule newRule = new Rule(rule, source, protocol);
+	public void appendRule(Rule.RuleType rule, int[] sourceIP, int netmask, 
+			Packet.Protocol protocol) {
+		Rule newRule = new Rule(rule, sourceIP, netmask, protocol);
 		if (!hasRule(newRule))
 			rules.add(newRule);
+	}
+	
+	// Deletes iptable rule
+	public void deleteRule(Rule rule) {
+		rules.remove(rule);
 	}
 	
 	/* Checks if the iptable rule exists. Returns true if it exists, returns
@@ -109,26 +128,21 @@ public class Device extends NetworkObject {
 	 * the rule matched
 	 */
 	public void protocol(Packet packet) {
-		// 15% chance of dropping
-        if (Math.random() < 0.15) {
-        	packet.setStatus(Status.Dead);
-          return;
-        }
 	
 	    for (Rule curRule : rules) {
 	        // if there is a matching rule
-	        if (packet.getSource() == curRule.getSource() && 
-	            packet.getProtocol().equals(curRule.getProtocol())) {
+	        if (hasMatchingIP(packet, curRule) && 
+	            packet.getProtocol() == (curRule.getProtocol())) {
 	
 	          // TCP protocol
-	          if (packet.getProtocol().equals("TCP")) {
+	          if (packet.getProtocol() == Packet.Protocol.TCP) {
 	
 	            // DROP (silently delete)
-	            if (curRule.getRule().equals("DROP")) {
+	            if (curRule.getRule() == Rule.RuleType.DROP) {
 	              packet.setStatus(Status.Dead);
 	
 	            // REJECT (notify of deletion)
-	            } else if (curRule.getRule().equals("REJECT")) {
+	            } else if (curRule.getRule() == Rule.RuleType.REJECT) {
 	            	packet.setStatus(Status.Dead);
 	              // notify source device that it was rejected
 	
@@ -138,14 +152,14 @@ public class Device extends NetworkObject {
 	            }
 	
 	          // UDP protocol
-	          } else if (packet.getProtocol().equals("UDP")) {
+	          } else if (packet.getProtocol() == Packet.Protocol.UDP) {
 	
 	            // DROP (silently delete)
-	            if (curRule.getRule().equals("DROP")) {
+	            if (curRule.getRule() == Rule.RuleType.DROP) {
 	            	packet.setStatus(Status.Dead);
 	
 	            // REJECT (silently delete)
-	            } else if (curRule.getRule().equals("REJECT")) {
+	            } else if (curRule.getRule() == Rule.RuleType.REJECT) {
 	            	packet.setStatus(Status.Dead);
 	
 	            } // No ACCEPT option, because accept does nothing
@@ -165,6 +179,39 @@ public class Device extends NetworkObject {
 		}
 		
 		packet.nextDevice(next);
+	}
+	
+	// Checks if the ip of the packet matches the ip of the rule
+	private boolean hasMatchingIP(Packet packet, Rule rule) {
+		boolean result = false;
+		
+		int[] sourceIP = packet.getSourceIP();
+		int[] ruleIP = rule.getSourceIP();
+		int netmask = rule.getNetmask();
+
+		if (netmask == 0) {
+			result = true;
+		
+		} else if (netmask == 8) {
+			if (sourceIP[0] == ruleIP[0])
+				result = true;
+				
+		} else if (netmask == 16) {
+			if (sourceIP[0] == ruleIP[0] && sourceIP[1] == ruleIP[1])
+				result = true;
+			
+		} else if (netmask == 24) {
+			if (sourceIP[0] == ruleIP[0] && sourceIP[1] == ruleIP[1] &&
+					sourceIP[2] == ruleIP[2])
+				result = true;
+			
+		} else if (netmask == 32) {
+			if (sourceIP[0] == ruleIP[0] && sourceIP[1] == ruleIP[1] &&
+					sourceIP[2] == ruleIP[2] && sourceIP[3] == ruleIP[3])
+				result = true;
+		}
+			
+		return result;
 	}
 	
 	// Returns the next device to send the packet to 

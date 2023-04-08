@@ -1,35 +1,45 @@
 package engine;
 
 import core.objects.Device;
+import core.objects.Packet;
 
 /* An iptable rule with ACCEPT and DROP options
  * Can filter the sender
  */
 public class Rule {
 	
+	public enum RuleType { ACCEPT, REJECT, DROP }
+	
 	// Either ACCEPT, REJECT, or DROP
-	private String rule;
+	private RuleType rule;
 	// Holds the device that is the sender of the packet
-	private Device source;
+	private int[] sourceIP;
+	private int netmask;
 	// Holds the protocol that is filtered (TCP/UDP)
-	private String protocol;
+	private Packet.Protocol protocol;
 
-	public Rule(String rule, Device source, String protocol) {
+	public Rule(RuleType rule, int[] sourceIP, int netmask, 
+			Packet.Protocol protocol) {
 		this.rule = rule;
-		this.source = source;
+		this.sourceIP = sourceIP;
+		this.netmask = netmask;
 		this.protocol = protocol;
 	}
 	
 	// Returns rule (ACCEPT or DROP)
-	public String getRule() {
+	public RuleType getRule() {
 		return rule;
 	}
 	
-	public Device getSource() {
-		return source;
+	public int[] getSourceIP() {
+		return sourceIP;
 	}
 	
-	public String getProtocol() {
+	public int getNetmask() {
+		return netmask;
+	}
+	
+	public Packet.Protocol getProtocol() {
 		return protocol;
 	}
 }
