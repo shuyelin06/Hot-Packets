@@ -46,6 +46,9 @@ public abstract class NetworkObject {
 	}
 	
 	// Getters
+	public float getX() { return position.x; }
+	public float getY() { return position.y; }
+	
 	// Gets the Device's Position
 	public Vector getPosition() { return position.copy(); }
 	// Get Device Identifier
