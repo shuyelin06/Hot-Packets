@@ -200,12 +200,39 @@ public class Device extends NetworkObject {
 			Simulation.Screen(width), Simulation.Screen(height));
 		
 		// Draw Connection
-		g.setColor(new Color(211, 211, 211, 100));
 		for ( Device dest : connections ) {
-			g.drawLine(
-					Simulation.ScreenX(position.x), Simulation.ScreenY(position.y), 
-					Simulation.ScreenX(dest.position.x), Simulation.ScreenY(dest.position.y));
+			drawEdge(dest, g);
 		}
+	}
+	
+	// Draw Edge
+	private void drawEdge(Device d, Graphics g) {
+		g.setColor(new Color(211, 211, 211, 100));
+		
+		// Get direction to destination
+		Vector direction = position.directionTo(d.position);
+		float distance = position.distance(d.position);
+		
+		// Arrow End
+		float arrowEndX = position.x + direction.x * distance * 0.975f;
+		float arrowEndY = position.y + direction.y * distance * 0.975f;
+		
+		// Draw Arrow
+		g.drawLine(
+				Simulation.ScreenX(position.x), Simulation.ScreenY(position.y), 
+				Simulation.ScreenX(arrowEndX), 
+				Simulation.ScreenY(arrowEndY));
+		
+		// Draw Arrow Points
+		Vector point1 = direction.rotate((float) Math.toRadians(150)).scalarMultiply(1.5f);
+		Vector point2 = direction.rotate((float) Math.toRadians(-150)).scalarMultiply(1.5f);
+		
+		g.drawLine(Simulation.ScreenX(arrowEndX), Simulation.ScreenY(arrowEndY), 
+				Simulation.ScreenX(arrowEndX + point1.x), 
+				Simulation.ScreenY(arrowEndY + point1.y));
+		g.drawLine(Simulation.ScreenX(arrowEndX), Simulation.ScreenY(arrowEndY), 
+				Simulation.ScreenX(arrowEndX + point2.x), 
+				Simulation.ScreenY(arrowEndY + point2.y));
 	}
 	
 }

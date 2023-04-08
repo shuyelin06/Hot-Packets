@@ -41,10 +41,17 @@ public class Vector {
 		float magnitude = magnitude();
 		return new Vector(x / magnitude, y / magnitude);
 	}
+	// Return a Copy of a Vector (Rotated Theta Counterclockwise)
+	public Vector rotate(float theta) {
+		return new Vector(
+				(float) (x * Math.cos(theta) - y * Math.sin(theta)),
+				(float) (x * Math.sin(theta) + y * Math.cos(theta))
+				);
+	}
 	
 	// Returns a Copy of the Vector
 	public Vector copy() { return new Vector(this); }
-		
+	
 	// Distance to Another Vector
 	public float distance(Vector v2) {
 		return (float) Math.sqrt((v2.x - x) * (v2.x - x) + 

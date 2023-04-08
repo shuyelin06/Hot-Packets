@@ -45,7 +45,7 @@ public class Network {
 	// Send Packet Method - Selects 2 Nodes to Send a Packet Between
 	public void sendPacket() {
 		int rand1 = (int) (Math.random() * devices.size());
-		int rand2 = (int) (Math.random() * 3);
+		int rand2 = (int) (Math.random() * 3 + 1);
 		
 		new Packet(
 				devices.get(rand1), devices.get(rand1).randomConnection(rand2),
