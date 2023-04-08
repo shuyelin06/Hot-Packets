@@ -305,7 +305,7 @@ public class Device extends NetworkObject {
 	
 	// Draw Method
 	@Override
-	public void draw(Graphics g) {
+	public void draw(Graphics g) {		
 		// Instantiate device image
 		Image scaledDeviceImg = get_image().getScaledCopy(
 				(int)Simulation.Screen(width), (int)Simulation.Screen(height));

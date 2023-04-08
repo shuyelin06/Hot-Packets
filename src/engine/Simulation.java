@@ -26,6 +26,7 @@ import core.protocols.FilterRule;
 import graphics.Box;
 import graphics.Text_Input;
 import graphics.boxes.CommandBox;
+import graphics.boxes.EscapeBox;
 import graphics.boxes.InfoBox;
 import graphics.boxes.MouseBox;
 import graphics.boxes.SliderBox;
@@ -95,6 +96,7 @@ public class Simulation extends BasicGameState {
 	private InfoBox infoBox; // Information Box (Displays Information)
 	private SliderBox simulationBox; // Simulation (Settings) Box
 	private CommandBox commandBox; // Command Box
+	private EscapeBox escapeIcon; // Escape Button
 
 	// Constructor
 	public Simulation(int id) { 
@@ -123,6 +125,14 @@ public class Simulation extends BasicGameState {
 				
 		// Initialize Boxes
 		boxes = new ArrayList<>();
+		
+		escapeIcon = new EscapeBox(arg0);
+		escapeIcon
+			.setX(0)
+			.setY(0)
+			.setWidth(20)
+			.setHeight(20)
+			.initialize();		
 		
 		mouseBox = new MouseBox(input);
 		mouseBox
@@ -156,10 +166,15 @@ public class Simulation extends BasicGameState {
 			.setHeight(Settings.Screen_Height * 0.055f)
 			.initialize();
 		
+
+		
 		boxes.add(mouseBox);
 		boxes.add(infoBox);
 		boxes.add(simulationBox);
 		boxes.add(commandBox);
+		boxes.add(escapeIcon);
+
+		
 		
 		// Start Tracking Time
 		time = System.currentTimeMillis();
@@ -202,6 +217,9 @@ public class Simulation extends BasicGameState {
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {	
+	
+		
+		
 		/* Process User Keyboard Input */
 		// Packet Generating P
 		if ( arg0.getInput().isKeyDown(Input.KEY_P) ) {
