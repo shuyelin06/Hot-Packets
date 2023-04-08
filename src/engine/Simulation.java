@@ -95,9 +95,6 @@ public class Simulation extends BasicGameState {
 	// Track User Input
 	private Input input;
 
-	// Track Commands
-	private Text_Input commands;
-
 	// Graphics
 	private ArrayList<Box> boxes;
 	private MouseBox mouseBox; // MouseBox (Handles Mouse Panning)
@@ -122,10 +119,7 @@ public class Simulation extends BasicGameState {
 		network = Network.getInstance();
 
 		// Initialize Center
-		center = new Vector(30, 30);
-				
-		
-		commands = new Text_Input();
+		center = new Vector(0, 0);
 		
 		// Set Simulation Mode
 		simulationMode = Mode.Random;
@@ -152,9 +146,9 @@ public class Simulation extends BasicGameState {
 		simulationBox = new SliderBox();
 		simulationBox
 			.setX(0.931f * Settings.Screen_Width)
-			.setY(0.167f * Settings.Screen_Height)
+			.setY(0.25f * Settings.Screen_Height)
 			.setWidth(0.107f * Settings.Screen_Width)
-			.setHeight(0.222f * Settings.Screen_Height)
+			.setHeight(0.335f * Settings.Screen_Height)
 			.initialize();
 		
 		commandBox = new CommandBox(arg0, input);
@@ -174,38 +168,66 @@ public class Simulation extends BasicGameState {
 		time = System.currentTimeMillis();
 
 		/* Testing */
-		Device one = new Device(5, 50);
-		one.setIP(1, 2, 3, 4);
-		Device two = new Device(45, 75);
-		two.setIP(1, 3, 5, 7);
-		Device three = new Device(70, 30);
-		three.setIP(1, 1, 2, 3);
-		Device four = new Device(100, 45);
-		four.setIP(2, 4, 6, 8);
-		Device five = new Device(120, 70);
-		five.setIP(3, 6, 9, 12);
-		Device six = new Device(70, 70);
-		six.setIP(4, 2, 1, 2);
-  		
-		two.insertRule(FilterRule.RuleType.DROP, one.getIP(), 32, 
-				two.getIP(), 32, Packet.Protocol.TCP);
+//		Device one = new Device(5, 50);
+//		one.setIP(1, 2, 3, 4);
+//		Device two = new Device(45, 75);
+//		two.setIP(1, 3, 5, 7);
+//		Device three = new Device(70, 30);
+//		three.setIP(1, 1, 2, 3);
+//		Device four = new Device(100, 45);
+//		four.setIP(2, 4, 6, 8);
+//		Device five = new Device(120, 70);
+//		five.setIP(3, 6, 9, 12);
+//		Device six = new Device(70, 70);
+//		six.setIP(4, 2, 1, 2);
+//		Device seven = new Device(20,30);
+//		seven.setIP(5, 2, 4, 2);
+//  		
+//		two.insertRule(FilterRule.RuleType.DROP, one.getIP(), 32, 
+//				two.getIP(), 32, Packet.Protocol.TCP);
+//		
+//		one.addConnection(two);
+//		one.addConnection(six);
+//		
+//		two.addConnection(three);
+//		two.addConnection(four);
+//		
+//		two.addConnection(five);
+//		seven.addConnection(five);
+//		three.addConnection(five);
+//		four.addConnection(five);
+//		
+//		five.addConnection(one);
+//		
+//		six.addConnection(three);
+//		
+//		new Packet(one, two, Packet.Protocol.TCP);
+//		
+//		new Packet(one, six, Packet.Protocol.TCP);
 		
-		one.addConnection(two);
-		one.addConnection(six);
+		Device centrality = new Device(0,0);
 		
-		two.addConnection(three);
-		two.addConnection(four);
+		Device one = new Device(-45,20);
+		Device two = new Device(-45,10);
+		Device three = new Device(-45,0);
+		Device four = new Device(-45,-10);
+		Device five = new Device(-45,-20);
 		
-		three.addConnection(five);
-		four.addConnection(five);
+		one.addConnection(centrality);
+		two.addConnection(centrality);
+		three.addConnection(centrality);
+		four.addConnection(centrality);
+		five.addConnection(centrality);
 		
-		five.addConnection(one);
+		Device output = new Device(20,0);
+		centrality.addConnection(output);
 		
-		six.addConnection(three);
+		Device clientOne = new Device(35,15);
+		Device clientTwo = new Device(35,-15);
 		
-		new Packet(one, two, Packet.Protocol.TCP);
+		output.addConnection(clientOne);
+		output.addConnection(clientTwo);
 		
-		new Packet(one, six, Packet.Protocol.TCP);
 	}
 
 	@Override

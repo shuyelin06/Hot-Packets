@@ -46,7 +46,9 @@ public class MessageBoard {
 			lastRemoved = System.currentTimeMillis();
 		}
 		
-		queue.add(s);
+		if ( queue.size() < 6 ) {
+			queue.add(s);
+		}
 	}
 	
 	// Update - Removes a Message When Timer Reaches 0

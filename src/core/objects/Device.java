@@ -47,6 +47,10 @@ public class Device extends NetworkObject {
 	// Device Color Representation
 	private Color deviceColor;
 	
+	// Traffic - Controls how many packets
+	// a device can take at a time.
+	private float traffic;
+	
 	/* Device Statistics */
 	private MessageBoard messagesReceived; 	// Messages (Recently) Received
 	
@@ -74,6 +78,8 @@ public class Device extends NetworkObject {
 		FilterRules = new ArrayList<>();
 		connections = new ArrayList<>();
 		
+		traffic = 0f;
+		
 		name = "NULL";
 		
 		width = 7;
@@ -82,6 +88,8 @@ public class Device extends NetworkObject {
 		deviceColor = new Color((int) (Math.random() * 255),
 				(int) (Math.random() * 255), (int) (Math.random() * 255));
 	}
+	
+	public boolean congested() { return traffic < 1f; }
 	
 	public Color getColor() { return deviceColor; }
 	
@@ -145,6 +153,15 @@ public class Device extends NetworkObject {
 	
 	// Update Device
 	public void update() {
+		traffic += Settings.Max_Traffic;
+		if ( Settings.Max_Traffic > 1f) {
+			if ( traffic > Settings.Max_Traffic )
+				traffic = Settings.Max_Traffic;
+		} else {
+			if ( traffic > 1f ) 
+				traffic = 1f;
+		}
+		
 		messagesReceived.update();
 	}
 	// Protocol Method
@@ -153,6 +170,9 @@ public class Device extends NetworkObject {
 	 * the rule matched
 	 */
 	public void protocol(Packet packet) {
+		// Decrease Traffic the Device Can Take by 1
+		traffic -= 1f;
+		
 		/* Increment Device Statistics */
 		if ( packet.getSource() == this ) { 
 			this.packetsSent++; 
@@ -287,9 +307,6 @@ public class Device extends NetworkObject {
 			return this;
 		}
 		
-		if ( this.ipString().equals("1.2.3.4") ) {
-			System.out.println((int) (Math.random() * connections.size()));
-		}
 		int random = (int) (Math.random() * connections.size());
 		return connections.get(random).randomConnection(depth - 1);
    }

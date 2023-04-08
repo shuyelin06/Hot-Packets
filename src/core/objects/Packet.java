@@ -92,11 +92,14 @@ public class Packet extends NetworkObject {
 	        	}
 	        }
 			
-			// Obtain Direction to Destination
+        	// Obtain Direction to Destination
 			Vector direction = position.directionTo(tempDestination.getPosition());
 			
 			// Obtain Speed of Packet
 			Vector speed = direction.scalarMultiply(Settings.Packet_Speed);
+			if ( tempDestination.congested() ) {
+				speed = speed.scalarMultiply(0.2f);
+			}
 			
 			// Move to Destination
 			position.x += speed.x;
@@ -106,6 +109,7 @@ public class Packet extends NetworkObject {
 			if (position.distance(tempDestination.getPosition()) < 1f ) {
 				tempDestination.protocol(this);
 			}
+			
 		}
 	}
 	
