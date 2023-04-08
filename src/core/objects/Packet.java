@@ -132,19 +132,21 @@ public class Packet extends NetworkObject {
 		info.add("==========");
 		
 		if ( status == Status.Alive ) {
-			info.add("Source:");
-			info.add("  " + source.ipString());
+			info.add("Source:" + source.ipString());
 			
-			info.add("Destination:");
-			info.add("  " + destination.ipString());
+			info.add("Destination: " + destination.ipString());
 			
-			info.add("Protocol: ");
+			info.add("---");
 			
+			String stringProtocol;
 			if ( protocol == Protocol.TCP ) {
-				info.add("  TCP");
+				stringProtocol = "TCP";
 			} else {
-				info.add("  UDP");
+				stringProtocol = "UDP";
 			}
+			
+			info.add("Protocol: " + stringProtocol);
+			
 		} else if ( status == Status.Lost ) {
 			info.add("Packet LOST");
 			info.add("Resending...");

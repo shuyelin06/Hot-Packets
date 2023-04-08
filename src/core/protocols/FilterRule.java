@@ -1,6 +1,9 @@
 package core.protocols;
 
+import java.util.ArrayList;
+
 import core.objects.Packet;
+import engine.Simulation;
 
 public class FilterRule extends Rule {
 public enum RuleType { ACCEPT, REJECT, DROP }
@@ -19,6 +22,15 @@ public enum RuleType { ACCEPT, REJECT, DROP }
 		this.sourceIP = sourceIP;
 		this.netmask = netmask;
 		this.protocol = protocol;
+	}
+	
+	// Get Info for the Rule. Overridden
+	@Override
+	public void getInfo(ArrayList<String> info) {
+		info.add("Rule - Filter");
+		info.add("  Block: TCP");
+		info.add("  From: " + Simulation.IPStringCIDR(sourceIP));
+		info.add("  To: 2.2.2.2/32");
 	}
 	
 	// Returns rule (ACCEPT or DROP)
