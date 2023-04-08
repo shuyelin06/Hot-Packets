@@ -79,7 +79,7 @@ public class Device extends NetworkObject {
 	public void getInfo(ArrayList<String> info) {
 		info.add("Device");
 		info.add("==========");
-		info.add(new Integer(identifier).toString());
+		info.add("IP: " + ipString());
 	}
 		
 	// Adds an Outgoing Connection
