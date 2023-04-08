@@ -29,6 +29,16 @@ public class InfoBox extends Box {
 		info = new ArrayList<String>();
 	}
 	
+	// Handle mouse also returns false if nothing is selected
+	@Override 
+	public boolean handleMouse(float mouseX, float mouseY) {
+		if ( selected == null ) return false;
+		return super.handleMouse(mouseX, mouseY);
+	}
+	
+	// Empty: Mouse Click does nothing
+	public void mouseClick(float mouseX, float mouseY) {}
+
 	// Set Selected
 	public void setSelected(NetworkObject o) { selected = o; }
 	

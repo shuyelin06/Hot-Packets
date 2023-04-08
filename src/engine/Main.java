@@ -20,7 +20,7 @@ public class Main extends StateBasedGame
 	public Main(String name) { 
 		super(name); 
 		
-		this.example = new Simulation(EXAMPLE_ID);
+		this.example = Simulation.getInstance();
 	}
 
 	public static int getScreenWidth() { return appgc.getScreenWidth(); }
