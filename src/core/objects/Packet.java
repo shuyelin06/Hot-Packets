@@ -18,6 +18,8 @@ public class Packet extends NetworkObject {
 	private Device source;
 	private Device destination;
 	
+	private int[] sourceIP;
+	
 	// Protocol used to send packet (TCP or UDP)
 	private Protocol protocol;
 	
@@ -35,6 +37,8 @@ public class Packet extends NetworkObject {
 		this.source = source;
 		this.destination = destination;
 		this.protocol = protocol;
+		
+		sourceIP = source.getIP();
 		
 		// Set Position
 		this.position = source.getPosition();
@@ -106,4 +110,9 @@ public class Packet extends NetworkObject {
 	public Protocol getProtocol() {
 		return protocol;
 	}
+	
+	public int[] getSourceIP() {
+		return sourceIP;
+	}
+	
 }
