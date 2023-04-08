@@ -68,6 +68,11 @@ public class Device extends NetworkObject {
 	
 	public Color getColor() { return deviceColor; }
 	
+	// Returns a String Representing its IP
+	public String ipString() {
+		return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
+	}
+	
 	// Gets an Array of Strings Describing the Device
 	public void getInfo(ArrayList<String> info) {
 		info.add("Device");

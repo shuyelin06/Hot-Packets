@@ -46,8 +46,8 @@ public class Packet extends NetworkObject {
 		this.position = source.getPosition();
 		
 		// Set Width and Height
-		this.width = 1f;
-		this.height = 1f;
+		this.width = 1.5f;
+		this.height = 1.5f;
 		
 		// Temp
 		source.protocol(this);
@@ -93,10 +93,13 @@ public class Packet extends NetworkObject {
 	// Draw Method
 	@Override
 	public void draw(Graphics g) {
-		g.setColor(source.getColor());
-		g.fillRect(Simulation.ScreenX(position.x - width / 4), 
-				Simulation.ScreenY(position.y + height / 4), 
-				Simulation.Screen(width / 2), Simulation.Screen(height / 2));
+		if ( status == Status.Alive ) {
+			g.setColor(source.getColor());
+			g.fillRect(Simulation.ScreenX(position.x - width / 4), 
+					Simulation.ScreenY(position.y + height / 4), 
+					Simulation.Screen(width / 2), Simulation.Screen(height / 2));
+		}
+		
 	}
 	
 	// Sets Packet Status
@@ -119,6 +122,28 @@ public class Packet extends NetworkObject {
 	public void getInfo(ArrayList<String> info) {
 		info.add("Packet");
 		info.add("==========");
+		
+		if ( status == Status.Alive ) {
+			info.add("Source:");
+			info.add("  " + source.ipString());
+			
+			info.add("Destination:");
+			info.add("  " + destination.ipString());
+			
+			info.add("Protocol: ");
+			
+			if ( protocol == Protocol.TCP ) {
+				info.add("  TCP");
+			} else {
+				info.add("  UDP");
+			}
+		} else if ( status == Status.Lost ) {
+			info.add("Packet LOST");
+			info.add("Resending...");
+		}
+		
+		
+		
 	}
 
 	public int[] getSourceIP() {

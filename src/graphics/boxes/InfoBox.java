@@ -7,6 +7,7 @@ import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
 import core.NetworkObject;
+import core.NetworkObject.Status;
 import engine.Simulation;
 import graphics.Box;
 
@@ -34,6 +35,11 @@ public class InfoBox extends Box {
 	// Draw Method
 	public void draw(Graphics g) {
 		if ( selected != null ) {
+			if ( selected.getStatus() == Status.Dead ) {
+				selected = null;
+				return;
+			}
+			
 			// Clear Info List
 			info.clear();
 			
@@ -47,12 +53,15 @@ public class InfoBox extends Box {
 			renderText(g, info);
 			
 			// Circle NetworkObject
-			g.setColor(Color.yellow);
-			float size = (float) Math.sqrt(
-						selected.getWidth() * selected.getWidth() + selected.getHeight() * selected.getHeight());
-			g.drawOval(
-				Simulation.ScreenX(selected.getX() - size / 2), Simulation.ScreenY(selected.getY() + size / 2), 
-				Simulation.Screen(size), Simulation.Screen(size));	
+			if ( selected.getStatus() == Status.Alive ) {
+				g.setColor(Color.yellow);
+				float size = (float) Math.sqrt(
+							selected.getWidth() * selected.getWidth() + selected.getHeight() * selected.getHeight());
+				g.drawOval(
+					Simulation.ScreenX(selected.getX() - size / 2), Simulation.ScreenY(selected.getY() + size / 2), 
+					Simulation.Screen(size), Simulation.Screen(size));
+			}
+				
 		}
 		
 	}
