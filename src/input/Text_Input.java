@@ -1,18 +1,22 @@
 package input;
 
+import java.util.ArrayList;
+
 public class Text_Input {
-	String command_input = "";
+
+	ArrayList<String> commands = new ArrayList<String>();
+	
 	boolean flag = true;
 	
 	public Text_Input() {
 	}
 	
-	public void setCommand(String text) {
-		command_input = text;
+	public void addCommand(String text) {
+		this.commands.add(text);
 	}
 	
-	public String getCommand() {
-		return command_input;
+	public ArrayList<String> getCommands(){
+		return commands;
 	}
 	
 }

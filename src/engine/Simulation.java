@@ -134,7 +134,7 @@ public class Simulation extends BasicGameState {
 				((int)( Settings.Screen_Height * 0.9f)),
 				((int)( Settings.Screen_Width * 0.95f)),
 				((int)( Settings.Screen_Height * 0.15f)));
-
+		commands = new Text_Input();
 
 		// Obtain User Input
 		input = arg0.getInput();
@@ -205,8 +205,9 @@ public class Simulation extends BasicGameState {
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
 
 		
-		if(input.isKeyPressed(Input.KEY_SPACE)) {
-			
+		if( arg0.getInput().isKeyPressed(Input.KEY_ENTER)) {
+			commands.addCommand(text.getText());
+			text.setText("");
 		}
 		
 		if ( input.isMousePressed(Input.MOUSE_LEFT_BUTTON) ) {
