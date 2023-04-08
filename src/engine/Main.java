@@ -6,11 +6,7 @@ import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
-public class Main extends StateBasedGame 
-{
-	// GameState IDs
-	public static final int EXAMPLE_ID = 0;
-      
+public class Main extends StateBasedGame {
     // BasicGameStates 
     private BasicGameState example;
     
@@ -20,7 +16,7 @@ public class Main extends StateBasedGame
 	public Main(String name) { 
 		super(name); 
 		
-		this.example = new Simulation(EXAMPLE_ID);
+		this.example = Simulation.getInstance();
 	}
 
 	public static int getScreenWidth() { return appgc.getScreenWidth(); }

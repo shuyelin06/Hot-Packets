@@ -46,12 +46,12 @@ public class Network {
 	// specific game corodinates
 	public NetworkObject searchForObject(float x, float y) {
 		for ( Device d : devices ) {
-			if ( d.atCoordinate(x, y) )
+			if ( d.getStatus() == Status.Alive && d.atCoordinate(x, y) )
 				return d;
 		}
 		
 		for ( Packet p : packets ) {
-			if ( p.atCoordinate(x, y ) )
+			if ( p.getStatus() == Status.Alive && p.atCoordinate(x, y ) )
 				return p;
 		}
 		
@@ -66,7 +66,7 @@ public class Network {
 		
 		new Packet(
 				devices.get(rand1), devices.get(rand1).randomConnection(rand2),
-				"TCP", this);
+				Packet.Protocol.TCP, this);
 	}
 	
 	// Update Method

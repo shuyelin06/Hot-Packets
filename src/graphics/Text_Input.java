@@ -1,4 +1,4 @@
-package input;
+package graphics;
 
 import java.util.ArrayList;
 

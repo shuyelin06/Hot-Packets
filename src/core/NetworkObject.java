@@ -1,5 +1,7 @@
 package core;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.SlickException;
 
@@ -19,7 +21,7 @@ public abstract class NetworkObject {
 	protected int identifier;
 	
 	// Status Variable
-	public enum Status { Alive, Dead }
+	public enum Status { Alive, Dead, Lost }
 	protected Status status;
 	
 	// Position (Units)
@@ -46,8 +48,16 @@ public abstract class NetworkObject {
 	}
 	
 	// Getters
+	public Status getStatus() { return status; }
+	
 	public float getX() { return position.x; }
 	public float getY() { return position.y; }
+	
+	public float getWidth() { return width; }
+	public float getHeight() { return height; }
+	
+	// Gets an Array of Strings Decribing the Device
+	public abstract void getInfo(ArrayList<String> info);
 	
 	// Gets the Device's Position
 	public Vector getPosition() { return position.copy(); }
