@@ -51,6 +51,8 @@ public class Packet extends NetworkObject {
 		
 		// Temp
 		source.protocol(this);
+		
+		System.out.println("New packet");
 	}
 	
 	// Gets Destination
@@ -63,35 +65,39 @@ public class Packet extends NetworkObject {
 	
 	// Packet Update
 	public void update() {
-		if ( tempDestination == null ) {
-			status = Status.Dead;
-			return;
-		}
 		
-		// small chance of packet getting lost, change to 0.001 for final
-        if (Math.random() < 0.01) {
-        	if (protocol == Protocol.TCP) {
-        		setStatus(Status.Lost);
-        		// new Packet(this.source, this.destination, this.protocol);
-        		
-        	} else if (protocol == Protocol.UDP) {
-        		setStatus(Status.Dead);
-        	}
-        }
+		if (status != Status.Dead) {
 		
-		// Obtain Direction to Destination
-		Vector direction = position.directionTo(tempDestination.getPosition());
-		
-		// Obtain Speed of Packet
-		Vector speed = direction.scalarMultiply(Settings.Packet_Speed);
-		
-		// Move to Destination
-		position.x += speed.x;
-		position.y += speed.y;
+			if ( tempDestination == null ) {
+				status = Status.Dead;
+				return;
+			}
+			
+			// small chance of packet getting lost, change to 0.001 for final
+	        if (Math.random() < 0.01) {
+	        	if (protocol == Protocol.TCP) {
+	        		setStatus(Status.Lost);
+	        		
+	        	} else if (protocol == Protocol.UDP) {
+	        		setStatus(Status.Dead);
 	
-		// When Packet Reaches Destination
-		if ( position.distance(tempDestination.getPosition()) < 1f ) {
-			tempDestination.protocol(this);
+	        	}
+	        }
+			
+			// Obtain Direction to Destination
+			Vector direction = position.directionTo(tempDestination.getPosition());
+			
+			// Obtain Speed of Packet
+			Vector speed = direction.scalarMultiply(Settings.Packet_Speed);
+			
+			// Move to Destination
+			position.x += speed.x;
+			position.y += speed.y;
+		
+			// When Packet Reaches Destination
+			if (position.distance(tempDestination.getPosition()) < 1f ) {
+				tempDestination.protocol(this);
+			}
 		}
 	}
 	

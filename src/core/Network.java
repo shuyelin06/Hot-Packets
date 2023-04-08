@@ -1,6 +1,7 @@
 package core;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 import org.newdawn.slick.Graphics;
 
@@ -28,19 +29,30 @@ public class Network {
 	// All devices in the network
 	private ArrayList<Device> devices;
 	
+	// Stack of new devices to be added
+	private Stack<Device> newDevices;
+	
 	// All packets in the network
 	private ArrayList<Packet> packets;
+	
+	// Stack of new packets to be added
+	private Stack<Packet> newPackets;
 	
 	// Constructor
 	public Network() {
 		devices = new ArrayList<>();
 		packets = new ArrayList<>();
+		newPackets = new Stack<>();
 	}
 	
 	// Add a Device
-	public void addDevice(Device d) { devices.add(d); }
+	public void addDevice(Device d) { 
+		newDevices.push(d); 
+		devices.add(newDevices.pop()); 
+	}
+	
 	// Add a Packet
-	public void addPacket(Packet p) { packets.add(p); }
+	public void addPacket(Packet p) { newPackets.push(p); }
 	
 	// Search Object Method - Searches for a NetworkObject Matching
 	// specific game corodinates
@@ -71,6 +83,10 @@ public class Network {
 	
 	// Update Method
 	public void update() {
+		while (!newPackets.isEmpty()) {
+			packets.add(newPackets.pop());
+		}
+			
 		// Update all Packets
 		for ( Packet p : packets ) {
 			p.update();
@@ -95,9 +111,5 @@ public class Network {
 		}
 	}
 	
-	// Removes a packet from the network if it were rejected/dropped 
-	public void deletePacket(Packet packet) {
-		System.out.println("Packet deleted");
-		packets.remove(packet);
-	}
+
 }

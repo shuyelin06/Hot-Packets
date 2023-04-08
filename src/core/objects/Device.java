@@ -10,6 +10,7 @@ import org.newdawn.slick.SlickException;
 
 import core.Network;
 import core.NetworkObject;
+import core.NetworkObject.Status;
 import core.geometry.Vector;
 import engine.FilterRule;
 import engine.Rule;
@@ -134,6 +135,12 @@ public class Device extends NetworkObject {
 	 * the rule matched
 	 */
 	public void protocol(Packet packet) {
+		
+		if (packet.getStatus() == Packet.Status.Lost) {
+			new Packet(packet.getSource(), packet.getDestination(), 
+					packet.getProtocol());
+			packet.setStatus(Status.Dead);
+		}
 	
 	    for (FilterRule curRule : FilterRules) {
 	        // if there is a matching rule
