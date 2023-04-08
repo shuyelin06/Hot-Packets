@@ -51,7 +51,7 @@ public class Simulation extends BasicGameState {
 	// Create a TextFile for command
 	private TextField text;
 	private TextField text1;
-	private UnicodeFont font = getNewFont("Arial" , 16);
+	private UnicodeFont font = getNewFont("Courier New " , 37);
 	
 	// Track Commands
 	private Text_Input commands;
@@ -95,8 +95,8 @@ public class Simulation extends BasicGameState {
 	public UnicodeFont getNewFont(String fontName , int fontSize){
 		UnicodeFont returnFont = new UnicodeFont(new Font(fontName , Font.PLAIN , fontSize));
 		returnFont.addAsciiGlyphs();
-		returnFont.getEffects().add(new ColorEffect(java.awt.Color.white));
-		return (returnFont);
+		returnFont.getEffects().add(new ColorEffect(java.awt.Color.green));
+		return returnFont;
 	}	
 
 	@Override
@@ -130,10 +130,10 @@ public class Simulation extends BasicGameState {
 		boxes.add(commandBox);
 
 		font.loadGlyphs();
-		text = new TextField(arg0,font, Settings.Screen_Width / 2,
-				((int)( Settings.Screen_Height * 0.9f)),
-				((int)( Settings.Screen_Width * 0.95f)),
-				((int)( Settings.Screen_Height * 0.15f)));
+		text = new TextField(arg0,font, 46,
+				((int)( Settings.Screen_Height * 0.825f)),
+				((int)( Settings.Screen_Width * 0.97f)),
+				((int)( Settings.Screen_Height * 0.25f)));
 		commands = new Text_Input();
 
 		// Obtain User Input
@@ -195,7 +195,6 @@ public class Simulation extends BasicGameState {
 					ScreenX(selectedEntity.getX()), ScreenY(selectedEntity.getY()), 
 					Screen(10), Screen(10));
 		}
-
 		text.render(arg0, g);
 
 
@@ -203,7 +202,6 @@ public class Simulation extends BasicGameState {
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
-
 		
 		if( arg0.getInput().isKeyPressed(Input.KEY_ENTER)) {
 			commands.addCommand(text.getText());
