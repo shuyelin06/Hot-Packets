@@ -19,7 +19,7 @@ public class Packet extends NetworkObject {
 	private Device destination;
 	
 	// Protocol used to send packet (TCP or UDP)
-	private String protocol;
+	private Protocol protocol;
 	
 	// Network that packet belongs to
 	private Network network;
@@ -28,7 +28,7 @@ public class Packet extends NetworkObject {
 	private Device tempDestination;
 	
 	// Constructor
-	public Packet(Device source, Device destination, String protocol, Network network) {
+	public Packet(Device source, Device destination, Protocol protocol, Network network) {
 		super();
 		
 		// Add to Network
@@ -66,6 +66,12 @@ public class Packet extends NetworkObject {
 			return;
 		}
 		
+		// 15% chance of packet getting lost
+        if (Math.random() < 0.001) {
+        	setStatus(Status.Dead);
+          return;
+        }
+		
 		// Obtain Direction to Destination
 		Vector direction = position.directionTo(tempDestination.getPosition());
 		
@@ -101,7 +107,7 @@ public class Packet extends NetworkObject {
 		return source;
 	}
 	
-	public String getProtocol() {
+	public Protocol getProtocol() {
 		return protocol;
 	}
 }

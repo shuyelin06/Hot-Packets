@@ -21,6 +21,7 @@ import engine.Simulation;
  * in the graph.
  */
 public class Device extends NetworkObject {
+	
 	// List of Outward Connections (Can Send Data to)
 	private ArrayList<Device> connections;
 	
@@ -68,7 +69,7 @@ public class Device extends NetworkObject {
   
 	/* inserts a rule to the top of the iptable of this device
 	 */
-	public void insertRule(String rule, Device source, String protocol) {
+	public void insertRule(Rule.RuleType rule, Device source, Packet.Protocol protocol) {
 		Rule newRule = new Rule(rule, source, protocol);
 		if (!hasRule(newRule))
 			rules.add(0, newRule);
@@ -76,7 +77,7 @@ public class Device extends NetworkObject {
 	
 	/* Appends a rule to the end of the iptable of this device
 	 */
-	public void appendRule(String rule, Device source, String protocol) {
+	public void appendRule(Rule.RuleType rule, Device source, Packet.Protocol protocol) {
 		Rule newRule = new Rule(rule, source, protocol);
 		if (!hasRule(newRule))
 			rules.add(newRule);
@@ -95,26 +96,21 @@ public class Device extends NetworkObject {
 	 * the rule matched
 	 */
 	public void protocol(Packet packet) {
-		// 15% chance of dropping
-        if (Math.random() < 0.15) {
-        	packet.setStatus(Status.Dead);
-          return;
-        }
 	
 	    for (Rule curRule : rules) {
 	        // if there is a matching rule
 	        if (packet.getSource() == curRule.getSource() && 
-	            packet.getProtocol().equals(curRule.getProtocol())) {
+	            packet.getProtocol() == (curRule.getProtocol())) {
 	
 	          // TCP protocol
-	          if (packet.getProtocol().equals("TCP")) {
+	          if (packet.getProtocol() == Packet.Protocol.TCP) {
 	
 	            // DROP (silently delete)
-	            if (curRule.getRule().equals("DROP")) {
+	            if (curRule.getRule() == Rule.RuleType.DROP) {
 	              packet.setStatus(Status.Dead);
 	
 	            // REJECT (notify of deletion)
-	            } else if (curRule.getRule().equals("REJECT")) {
+	            } else if (curRule.getRule() == Rule.RuleType.REJECT) {
 	            	packet.setStatus(Status.Dead);
 	              // notify source device that it was rejected
 	
@@ -124,14 +120,14 @@ public class Device extends NetworkObject {
 	            }
 	
 	          // UDP protocol
-	          } else if (packet.getProtocol().equals("UDP")) {
+	          } else if (packet.getProtocol() == Packet.Protocol.UDP) {
 	
 	            // DROP (silently delete)
-	            if (curRule.getRule().equals("DROP")) {
+	            if (curRule.getRule() == Rule.RuleType.DROP) {
 	            	packet.setStatus(Status.Dead);
 	
 	            // REJECT (silently delete)
-	            } else if (curRule.getRule().equals("REJECT")) {
+	            } else if (curRule.getRule() == Rule.RuleType.REJECT) {
 	            	packet.setStatus(Status.Dead);
 	
 	            } // No ACCEPT option, because accept does nothing

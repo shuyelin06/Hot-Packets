@@ -49,7 +49,7 @@ public class Network {
 		
 		new Packet(
 				devices.get(rand1), devices.get(rand1).randomConnection(rand2),
-				"TCP", this);
+				Packet.Protocol.TCP, this);
 	}
 	
 	// Update Method
