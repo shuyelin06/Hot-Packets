@@ -17,6 +17,8 @@ import core.Network;
 import core.objects.Device;
 import core.objects.Packet;
 import commandparsing.CommandParser.CommandType;
+import commandparsing.CreateDevice;
+import commandparsing.*;
 import engine.Settings;
 import engine.Simulation;
 import graphics.Box;
@@ -110,12 +112,14 @@ public class CommandBox extends Box {
 		
 		// get type of command and make object of 
 		// appropriate type to parse it
-		String param1 = " ";
-		String param2 = " ";
-		String param3 = " ";
-		
 		CommandType type = command.getCommandType();
 		if (type != null) {
+			int srcIP[];
+			int destIP[];
+			
+			Device srcDevice;
+			Device destDevice;
+			
 			switch ( type ) {
 				case PREROUTING:
 					Prerouting prting = new Prerouting(text);
@@ -123,16 +127,20 @@ public class CommandBox extends Box {
 					break;
 					
 				case POSTROUTING:
+					Postrouting psting = new Postrouting(text);
 					System.out.println("POSTROUTING!");
 					break;
 					
 				case FILTER:
+					Filter filter = new Filter(text);
 					System.out.println("FILTER!");
 					break;
 					
 				case CREATEDEVICE:
-					int[] ip = Simulation.ArrayIP(param1);
-					String name = param2;
+					CreateDevice createDev = new CreateDevice(text);
+					
+					int[] ip = Simulation.ArrayIP(createDev.getIP());
+					String name = createDev.getName();
 					
 					Device device = new Device(0, 0);
 					device
@@ -142,13 +150,15 @@ public class CommandBox extends Box {
 					break;
 					
 				case CREATECONNECTION:
+					CreateConnection createCon = new CreateConnection(text);
+					
 					// Find IP Addresses
-					int[] srcIP = Simulation.ArrayIP(param1);
-					int[] destIP = Simulation.ArrayIP(param2);
+					srcIP = Simulation.ArrayIP(createCon.getSourceIP());
+					destIP = Simulation.ArrayIP(createCon.getDestinationIP());
 					
 					// Find Source and Destination Device
-					Device srcDevice = Network.getInstance().searchForDevice(srcIP);
-					Device destDevice = Network.getInstance().searchForDevice(destIP);
+					srcDevice = Network.getInstance().searchForDevice(srcIP);
+					destDevice = Network.getInstance().searchForDevice(destIP);
 					
 					// Attempt to Add Edge
 					srcDevice.addConnection(destDevice);
@@ -156,17 +166,20 @@ public class CommandBox extends Box {
 					break;
 					
 				case SENDPACKET:
+					SendPacket sendPac = new SendPacket(text);
+					
 					// Find IP Addresses
-					int[] srcIP = Simulation.ArrayIP(param1);
-					int[] destIP = Simulation.ArrayIP(param2);
+					srcIP = Simulation.ArrayIP(sendPac.getSourceIP());
+					destIP = Simulation.ArrayIP(sendPac.getDestinationIP());
 					
 					// Find Source and Destination Device
-					Device srcDevice = Network.getInstance().searchForDevice(srcIP);
-					Device destDevice = Network.getInstance().searchForDevice(destIP);
+					srcDevice = Network.getInstance().searchForDevice(srcIP);
+					destDevice = Network.getInstance().searchForDevice(destIP);
 					
 					// Protocol
 					Packet.Protocol protocol = 
-						( param3.toLowerCase().equals("tcp") ? Packet.Protocol.TCP : Packet.Protocol.UDP );
+						( sendPac.getProtocol().toLowerCase().equals("tcp") ? 
+								Packet.Protocol.TCP : Packet.Protocol.UDP );
 					
 					// Randomize Network
 					
@@ -176,13 +189,15 @@ public class CommandBox extends Box {
 					break;
 					
 				case PING:
+					Ping ping = new Ping(text);
+					
 					// Find IP Address
-					int[] srcIP = Simulation.ArrayIP(param1);
+					srcIP = Simulation.ArrayIP(ping.getSourceIP());
 					
 					// Find Device
-					Device device = Network.getInstance().searchForDevice(srcIP);
+					Device dev = Network.getInstance().searchForDevice(srcIP);
 					// Tell Device to Ping
-					device.setPing(true);
+					dev.setPing(true);
 					
 					break;
 					

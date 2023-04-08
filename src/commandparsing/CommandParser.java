@@ -46,6 +46,22 @@ public class CommandParser {
 			else {
 				Filter filt = new Filter(userCommand);
 				if (filt.checkValidCommand()) type = CommandType.FILTER;
+				else {
+					CreateDevice createDev = new CreateDevice(userCommand);
+					if (createDev.checkValidCommand()) type = CommandType.CREATEDEVICE;
+					else {
+						CreateConnection createCon = new CreateConnection(userCommand);
+						if (createCon.checkValidCommand()) type = CommandType.CREATEDEVICE;
+						else {
+							SendPacket sendPac = new SendPacket(userCommand);
+							if (sendPac.checkValidCommand()) type = CommandType.SENDPACKET;
+							else {
+								Ping pong = new Ping(userCommand);
+								if (pong.checkValidCommand()) type = CommandType.PING;
+							}
+						}
+					}
+				}
 			}
 		}
 		
