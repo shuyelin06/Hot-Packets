@@ -20,7 +20,7 @@ public class Main extends StateBasedGame
 	public Main(String name) { 
 		super(name); 
 		
-		this.example = new ExampleScene(EXAMPLE_ID);
+		this.example = new Simulation(EXAMPLE_ID);
 	}
 
 	public static int getScreenWidth() { return appgc.getScreenWidth(); }
@@ -41,7 +41,10 @@ public class Main extends StateBasedGame
 			appgc = new AppGameContainer(new Main("Bitcamp 2023"));
 			System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
 			
-			appgc.setDisplayMode(appgc.getScreenWidth(), appgc.getScreenHeight(), false);
+			Settings.Screen_Width = appgc.getScreenWidth();
+			Settings.Screen_Height = appgc.getScreenHeight();
+			
+			appgc.setDisplayMode(Settings.Screen_Width, Settings.Screen_Height, false);
 			appgc.setTargetFrameRate(60);
 			
 			appgc.start();
