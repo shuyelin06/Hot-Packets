@@ -9,6 +9,7 @@ public class Filter extends CommandParser{
 	// Instantiating Filter command object
 	public Filter (String commandToParse) {
 		super(commandToParse);
+		
 		userCommand = commandToParse;
 		command = "iptables insert source destination protocol action";
 		commandArray = command.split(" ", 10);
