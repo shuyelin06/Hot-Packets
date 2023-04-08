@@ -37,7 +37,7 @@ public class Network {
 		for ( Packet p : packets ) {
 			p.update();
 		}
-	}
+	} // anna is so cool
 	
 	// Draw Method
 	public void draw(Graphics g) {
@@ -51,5 +51,11 @@ public class Network {
 		for ( Packet p : packets ) {
 			p.draw(g);
 		}
+	}
+	
+	// Removes a packet from the network if it were rejected/dropped 
+	public void deletePacket(Packet packet) {
+		System.out.println("Packet deleted");
+		packets.remove(packet);
 	}
 }

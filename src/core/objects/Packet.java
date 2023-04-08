@@ -3,6 +3,7 @@ package core.objects;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import core.Network;
 import core.NetworkObject;
 import core.geometry.Vector;
 import engine.Settings;
@@ -13,16 +14,24 @@ public class Packet extends NetworkObject {
 	private Device source;
 	private Device destination;
 	
+	// Protocol used to send packet (TCP or UDP)
+	private String protocol;
+	
+	// Network that packet belongs to
+	private Network network;
+	
 	// Device Packet is Currently Traveling to
 	private Device tempDestination;
 	
 	// Constructor
-	public Packet(Device source, Device destination) {
+	public Packet(Device source, Device destination, String protocol, Network network) {
 		super();
 		
 		// Set Variables
 		this.source = source;
 		this.destination = destination;
+		this.protocol = protocol;
+		this.network = network;
 		
 		// Set Position
 		this.position = source.getPosition();
@@ -58,5 +67,15 @@ public class Packet extends NetworkObject {
 		g.drawRect(Simulation.ScreenX(position.x - width / 2), 
 				Simulation.ScreenY(position.y + height / 2), 
 				Simulation.Screen(width), Simulation.Screen(height));
+	}
+	
+	/* Returns the source device of this packet
+	 */
+	public Device getSource() {
+		return source;
+	}
+	
+	public String getProtocol() {
+		return protocol;
 	}
 }
