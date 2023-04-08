@@ -1,6 +1,7 @@
 package core;
 
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.SlickException;
 
 import core.geometry.Vector;
 import engine.Settings;
@@ -35,7 +36,7 @@ public abstract class NetworkObject {
 		// Initialize Status
 		status = Status.Alive;
 		
-		// Intialize Width and Height
+		// Initialize Width and Height
 		width = 2;
 		height = 2;
 		
@@ -62,5 +63,4 @@ public abstract class NetworkObject {
 	
 	// Draw Method
 	public abstract void draw(Graphics g);
-	
 }

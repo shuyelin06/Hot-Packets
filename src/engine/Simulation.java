@@ -71,22 +71,26 @@ public class Simulation extends BasicGameState {
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {
+		// Zoom in and out
 		if ( arg0.getInput().isKeyDown(Input.KEY_Z) ) {
 			Settings.Pixels_Per_Unit -= 0.15f;
 		}
 		if ( arg0.getInput().isKeyDown(Input.KEY_X) ) {
 			Settings.Pixels_Per_Unit += 0.15f;
 		}
-		// Update Simulation
+		// Pan left when A is held down
 		if ( arg0.getInput().isKeyDown(Input.KEY_A) ) {
 			center.x -= 0.5f;
 		}
+		// Pan right when D is held down
 		if ( arg0.getInput().isKeyDown(Input.KEY_D) ) {
 			center.x += 0.5f;
 		}
+		// Pan down when S is held down
 		if ( arg0.getInput().isKeyDown(Input.KEY_S) ) {
 			center.y -= 0.5f;
 		}
+		// Pan up when W is held down
 		if ( arg0.getInput().isKeyDown(Input.KEY_W) ) {
 			center.y += 0.5f;
 		}

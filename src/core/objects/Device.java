@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
 
 import core.NetworkObject;
 import core.geometry.Vector;
@@ -30,7 +32,7 @@ public class Device extends NetworkObject {
 	public Device(float x, float y) {
 		super();
 		
-		// Set Postion
+		// Set Position2	
 		position.x = x;
 		position.y = y;
 		
@@ -39,6 +41,9 @@ public class Device extends NetworkObject {
 		
 		name = "NULL";
 		ip = "NULL";
+		
+		width = 7;
+		height = 7;
 	}
 	
 	// Protocol Method
@@ -51,11 +56,34 @@ public class Device extends NetworkObject {
 	@Override
 	public void draw(Graphics g) {
 		// Draw Device (Circle)
+		
+		
 		g.setColor(Color.blue);
 		g.drawOval(
 			Simulation.ScreenX(position.x - width / 2), 
 			Simulation.ScreenY(position.y + height / 2), 
 			Simulation.Screen(width), Simulation.Screen(height));
-	}
 	
+		
+		// Draw device (device drawing)
+		try {
+			
+			Image deviceImg = new Image("res/Device.png");
+			Image scaledDeviceImg = deviceImg.getScaledCopy(
+					(int)Simulation.Screen(width), (int)Simulation.Screen(height));
+			g.drawImage(scaledDeviceImg, 
+					Simulation.ScreenX(position.x - width / 2), 
+					Simulation.ScreenY(position.y + height / 2));
+			
+			/*
+			deviceImg.draw(Simulation.ScreenX(position.x - width / 2), 
+			Simulation.ScreenY(position.y + height / 2), 
+			Simulation.Screen(width), Simulation.Screen(height)); */
+					
+		} catch (SlickException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }
