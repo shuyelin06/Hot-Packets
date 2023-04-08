@@ -16,10 +16,35 @@ public class Vector {
 		x = y = 0f;
 	}
 	
+	// Constructor
+	public Vector(float x, float y) {
+		this.x = x;
+		this.y = y;
+	}
+	
 	// Copy Constructor
 	public Vector(Vector vector) {
 		x = vector.x;
 		y = vector.y;
+	}
+	
+	// Vector Magnitude
+	public float magnitude() { return (float) Math.sqrt(x * x + y * y); };
+	
+	// Vector Difference between Two Vectors
+	public static Vector VectorDifference(Vector from, Vector to) {
+		return new Vector(to.x - from.x, to.y - from.y);
+	}
+	
+	// Multiplies a Vector by a Scalar
+	public Vector scalarMultiply(float scale) {
+		return new Vector(x * scale, y * scale);
+	}
+	
+	// Return a Copy of a Normalized Vector
+	public Vector normalize() { 
+		float magnitude = magnitude();
+		return new Vector(x / magnitude, y / magnitude);
 	}
 	
 	// Returns a Copy of the Vector
