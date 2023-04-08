@@ -1,5 +1,7 @@
 package graphics;
 
+import java.util.ArrayList;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
@@ -7,12 +9,12 @@ import engine.Simulation;
 
 public class Box {
 	// Center X and Y
-	private float centerX;
-	private float centerY;
+	protected float centerX;
+	protected float centerY;
 	
 	// Width and Height
-	private float width;
-	private float height;
+	protected float width;
+	protected float height;
 	
 	// Constructor
 	public Box() {
@@ -39,8 +41,7 @@ public class Box {
 	// Rendering
 	public void draw(Graphics g) {
 		g.setColor(Color.gray);
-		g.fillRect(
-			Simulation.ScreenX(centerX), Simulation.ScreenY(centerY), 
-			Simulation.Screen(width), Simulation.Screen(height));
+		g.fillRect(centerX - width / 2, centerY - height / 2, width, height);
 	}
+	
 }

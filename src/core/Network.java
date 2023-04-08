@@ -42,6 +42,23 @@ public class Network {
 	// Add a Packet
 	public void addPacket(Packet p) { packets.add(p); }
 	
+	// Search Object Method - Searches for a NetworkObject Matching
+	// specific game corodinates
+	public NetworkObject searchForObject(float x, float y) {
+		for ( Device d : devices ) {
+			if ( d.atCoordinate(x, y) )
+				return d;
+		}
+		
+		for ( Packet p : packets ) {
+			if ( p.atCoordinate(x, y ) )
+				return p;
+		}
+		
+		return null;
+	}
+	
+	
 	// Send Packet Method - Selects 2 Nodes to Send a Packet Between
 	public void sendPacket() {
 		int rand1 = (int) (Math.random() * devices.size());
