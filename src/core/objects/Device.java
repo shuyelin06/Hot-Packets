@@ -1,6 +1,7 @@
 package core.objects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.newdawn.slick.Color;
@@ -260,14 +261,18 @@ public class Device extends NetworkObject {
 			visited = new HashSet<Device>();
 		}
 		
+		// Randomize the pathfinding
+		Collections.shuffle(connections);
+		
 		for ( Device d : connections ) {
-			if ( visited != null && visited.contains(d) ) {
+			if (visited.contains(d) ) {
 				continue;
 			} else {
 				visited.add(d);
 				if ( d.routePacket(destination, visited) != null ) {
 					return d;
 				} 
+				visited.remove(d);
 			}
 			
 		}
@@ -282,6 +287,9 @@ public class Device extends NetworkObject {
 			return this;
 		}
 		
+		if ( this.ipString().equals("1.2.3.4") ) {
+			System.out.println((int) (Math.random() * connections.size()));
+		}
 		int random = (int) (Math.random() * connections.size());
 		return connections.get(random).randomConnection(depth - 1);
    }

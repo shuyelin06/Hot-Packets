@@ -204,6 +204,8 @@ public class Simulation extends BasicGameState {
 		six.addConnection(three);
 		
 		new Packet(one, two, Packet.Protocol.TCP);
+		
+		new Packet(one, six, Packet.Protocol.TCP);
 	}
 
 	@Override

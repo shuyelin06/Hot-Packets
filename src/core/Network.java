@@ -80,7 +80,9 @@ public class Network {
 		
 		Device source = devices.get(rand1);
 		Device destination = source.randomConnection(rand2);
-		if ( source != destination ) {
+		
+		// Prevent a device from sending a packet to itself
+		if ( source != destination ) { 
 			new Packet(source, destination, Packet.Protocol.TCP);
 		}
 		
