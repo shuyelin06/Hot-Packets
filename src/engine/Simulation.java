@@ -50,7 +50,7 @@ public class Simulation extends BasicGameState {
 
 	// Create a TextFile for command
 	private TextField text;
-	private TextField text1;
+	private TextField prompt;
 	private UnicodeFont font = getNewFont("Courier New " , 37);
 	
 	// Track Commands
@@ -134,6 +134,10 @@ public class Simulation extends BasicGameState {
 				((int)( Settings.Screen_Height * 0.825f)),
 				((int)( Settings.Screen_Width * 0.97f)),
 				((int)( Settings.Screen_Height * 0.25f)));
+		prompt = new TextField(arg0,font, 46,
+				(7),
+				(900),
+				((int)( Settings.Screen_Height * 0.25f)));
 		commands = new Text_Input();
 
 		// Obtain User Input
@@ -195,6 +199,12 @@ public class Simulation extends BasicGameState {
 					ScreenX(selectedEntity.getX()), ScreenY(selectedEntity.getY()), 
 					Screen(10), Screen(10));
 		}
+		
+		g.setColor(Color.lightGray);
+		g.setColor(Color.green);
+		prompt.setText("~:");
+		prompt.render(arg0, g);
+		text.setLocation(6, 900);
 		text.render(arg0, g);
 
 
