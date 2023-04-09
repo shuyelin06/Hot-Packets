@@ -2,7 +2,7 @@
 ##### Creators: Wendy Tu, Brian Xie, Anna Dai, Shu-Ye Lin
 
 ### About
-Built using the Slick2D graphics library, Hot Packets is a network simulation tool envisioned during and developed at <a href = "https://bitcamp2023.devpost.com/?ref_feature=challenge&ref_medium=discover">Bitcamp 2023</a>. Winning the **Best Bitcamp Hack** award (<a href = "https://devpost.com/software/hot-packets?ref_content=user-portfolio&ref_feature=in_progress">see here!</a>), Hot Packets simulates the intricacies of packet flow throughout a network system in an easy-to-understand manner, and even supports `iptable` filter and NAT rules.
+Built using the Slick2D graphics library, Hot Packets is a network simulation tool envisioned during and developed at <a href = "https://bitcamp2023.devpost.com/?ref_feature=challenge&ref_medium=discover">Bitcamp 2023</a>. Winning the **Best Bitcamp Hack** award (<a href = "https://devpost.com/software/hot-packets?ref_content=user-portfolio&ref_feature=in_progress">see here!</a>), Hot Packets simulates the intricacies of packet flow throughout a network system in an easy-to-understand manner, and even supports`iptable` filter and NAT rules.
 
 To interact with the simulation, the user is provided with simple sliders (to adjust simulation settings) and a command prompt for additional functionality. 
 
@@ -16,3 +16,5 @@ Supported commands are given below:
 - `ping from [host ip]`: Toggles a flag on devices, causing them to send packets outwards (to random connected devices). Useful for traffic congestion analysis.
 
 Such a simulation tool may serve as a useful basis for testing and researching largescale networks without risking the integrity of the actual network. It can be used for traffic congestion analysis, attacker behavior analysis, and educational purposes.
+
+![HotPacketsDemoImg1](https://user-images.githubusercontent.com/73412642/230796645-d6ce5234-52f8-4b00-8424-7d6ef2ceb96a.png)
