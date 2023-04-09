@@ -79,7 +79,6 @@ public class CommandBox extends Box {
 	// Update
 	public void update() {
 		if ( input.isKeyPressed(Input.KEY_ENTER) ) {
-			System.out.println(text.getText());
 			parseCommand(text.getText());
 			text.setText("");
 			
@@ -125,7 +124,6 @@ public class CommandBox extends Box {
 					Prerouting prting = new Prerouting(text);
 					
 					// Host Device
-					System.out.println("PREROUTING!");
 					host = Network.getInstance().searchForDevice(
 							Simulation.ArrayIP(prting.getHost()));
 					
@@ -145,7 +143,6 @@ public class CommandBox extends Box {
 					Postrouting psting = new Postrouting(text);
 					
 					// Host Device
-					System.out.println("PREROUTING!");
 					host = Network.getInstance().searchForDevice(
 							Simulation.ArrayIP(psting.getHost()));
 					
@@ -162,8 +159,6 @@ public class CommandBox extends Box {
 					break;
 					
 				case FILTER:
-					System.out.println("Filter!");
-					
 					Filter filter = new Filter(text);
 					
 					// Host Device
@@ -205,8 +200,7 @@ public class CommandBox extends Box {
 					
 					Device device = new Device(0, 0);
 					device
-						.setIP(ip)
-						.setName(name);
+						.setIP(ip);
 					
 					break;
 					
@@ -254,7 +248,6 @@ public class CommandBox extends Box {
 					srcIP = Simulation.ArrayIP(ping.getSourceIP());
 					
 					// Find Device
-					for ( int i : srcIP ) { System.out.println(i); }
 					Device dev = Network.getInstance().searchForDevice(srcIP);
 					// Tell Device to Ping
 					dev.setPing(!dev.getPing());

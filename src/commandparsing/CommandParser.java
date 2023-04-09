@@ -5,15 +5,15 @@ import java.util.List;
 
 public class CommandParser {
 
-	String command; // master command that user command will be compared with
-	String[] commandArray; // master command, but as an array of Strings
+	protected String command; // master command that user command will be compared with
+	protected String[] commandArray; // master command, but as an array of Strings
 	
-	String userCommand; // user command
-	String[] userCommandArray; // user command, but as an array of Strings
+	protected String userCommand; // user command
+	protected String[] userCommandArray; // user command, but as an array of Strings
 	
-	List<Integer> wordsToCheck; // places in user command array to check
+	protected List<Integer> wordsToCheck; // places in user command array to check
 	
-	int numArguments;
+	protected int numArguments;
 	
 	// For returning the type of a command
 	public enum CommandType {
@@ -25,6 +25,7 @@ public class CommandParser {
 		SENDPACKET,
 		PING
 	}
+	
 	// Instantiate with command to parse, as well as instantiating
 	// static variables
 	public CommandParser(String commandToParse) {
@@ -45,14 +46,12 @@ public class CommandParser {
 			if (psting.checkValidCommand()) type = CommandType.POSTROUTING;
 			else {
 				Filter filt = new Filter(userCommand);
-				System.out.println("Filter");
 				if (filt.checkValidCommand()) type = CommandType.FILTER;
 				else {
 					CreateDevice createDev = new CreateDevice(userCommand);
 					if (createDev.checkValidCommand()) type = CommandType.CREATEDEVICE;
 					else {
 						CreateConnection createCon = new CreateConnection(userCommand);
-						System.out.println("Create nuts");
 						if (createCon.checkValidCommand()) type = CommandType.CREATECONNECTION;
 						else {
 							SendPacket sendPac = new SendPacket(userCommand);
@@ -74,25 +73,14 @@ public class CommandParser {
 	
 	// Returns true if command follows template, false if it doesn't
 	public boolean checkValidCommand() {
-		System.out.println("Valid Check: " + commandArray[0] + commandArray[1]);
 		boolean isValid = true;
 		// check if user command length is same as template command length
 		 if (userCommandArray.length == commandArray.length + numArguments) {
-			 System.out.println("---");
-			 
-			 for ( String s : commandArray ) { System.out.println(s); }
 			 
 			 // checks if user command matches template command
 			 for (int i = 0; i < commandArray.length; i++) {
-				 
-//				 System.out.println(userCommandArray[wordsToCheck.get(i)]);
 				 int index =  wordsToCheck.get(i);
-				 String userCommandWord = userCommandArray[index];
-				 
-				 System.out.println("1: " + userCommandArray[index]);
-				 System.out.println("2: " + commandArray[i]);
-				 
-				 
+				 String userCommandWord = userCommandArray[index]; 
 				 // if user command doesn't match, return false
 				 if (!(userCommandWord.equals(commandArray[i]))) {
 					 isValid = false;
@@ -103,7 +91,6 @@ public class CommandParser {
 		 }
 		 else isValid = false;
 		 
-		 System.out.println("(2) Valid Check: " + commandArray[0] + commandArray[1]);
 		 return isValid;
 	}
 }

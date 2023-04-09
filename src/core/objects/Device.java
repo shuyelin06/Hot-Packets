@@ -29,35 +29,38 @@ import graphics.MessageBoard;
  */
 public class Device extends NetworkObject {
 	
+	// Device Image Singleton
+	private static Image device_image;
+	
+	// Instantiate device image
+	public static Image get_image() {
+		if ( device_image == null ) {
+			try {
+				device_image = new Image("res/Device.png");
+			} catch (SlickException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		return device_image;
+	}
+		
 	// List of Outward Connections (Can Send Data to)
 	private ArrayList<Device> connections;
 	
-	// List of iptable filter rules
+	// List of Iptable Filter and NAT Rules
 	private ArrayList<FilterRule> FilterRules;
-	
 	private ArrayList<NatRule> NatRules;
 	
 	// Device Information
-	private String name;
 	private int[] ip = new int[5];
 	
-	// Device image (same for every device object)
-	private static Image device_image;
+	// Device Configurations
+	private float traffic; // Traffic - Controls how many packets a device can take at a time.
+	private boolean ping; // Tracks if a Device will Constantly Ping
+	private Color deviceColor; // Device Color Representation
 	
-	// Tracks if a Device will Constantly Ping
-	private boolean ping;
-	
-	// Get Connections
-	public ArrayList<Device> getConnections() { return connections; }
-	
-	// Device Color Representation
-	private Color deviceColor;
-	
-	// Traffic - Controls how many packets
-	// a device can take at a time.
-	private float traffic;
-	
-	/* Device Statistics */
+	// Device Statistics
 	private MessageBoard messagesReceived; 	// Messages (Recently) Received
 	
 	private int packetsSent; // Packets Sent Through Device
@@ -89,8 +92,6 @@ public class Device extends NetworkObject {
 		
 		traffic = 0f;
 		
-		name = "NULL";
-		
 		width = 7;
 		height = 7;
 		
@@ -98,22 +99,32 @@ public class Device extends NetworkObject {
 				(int) (Math.random() * 255), (int) (Math.random() * 255));
 	}
 	
-	// Setters
+	/* Setters */ 
 	// Set the Device IP
-	public Device setIP(int[] ip) { this.ip = ip;			return this; } 
-	// Set the Device Name
-	public Device setName(String name) { this.name = name; 	return this; }
+	public Device setIP(int[] ip) { this.ip = ip; return this; } 
 	// Set if the Device Should Ping
 	public Device setPing(boolean ping) { this.ping = ping; return this; }
+	
+	// Sets the IP
+	public void setIP(int a1, int a2, int a3, int a4) {
+		ip[0] = a1; ip[1] = a2; ip[2] = a3; ip[3] = a4;
+	}
+		
+	/* Getters */
+	// Get Connections
+	public ArrayList<Device> getConnections() { return connections; }
+	// Get Device Color (Colors Packets)
+	public Color getColor() { return deviceColor; }
+		
+	// Returns True if the device has been set to ping 
+	public boolean getPing() { return ping; }
+	// Returns True if the device is congested (not accepting packets)
 	public boolean congested() { return traffic < 1f; }
 	
-	public Color getColor() { return deviceColor; }
-	
-	public boolean getPing() { return ping; }
-	// Returns a String Representing its IP
-	public String ipString() {
-		return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
-	}
+	// Sets Device IP
+	public int[] getIP() { return ip; }
+	// Returns a String Representing device  IP
+	public String ipString() { return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3]; }
 	
 	// Gets an Array of Strings Describing the Device
 	public void getInfo(ArrayList<String> info) {
@@ -131,7 +142,9 @@ public class Device extends NetworkObject {
 			r.getInfo(info);
 		}
 	}
-		
+	
+	
+	/* Device Configurations */
 	// Adds an Outgoing Connection
 	public void addConnection(Device d) {
 		if ( !connections.contains(d) ) {
@@ -139,40 +152,18 @@ public class Device extends NetworkObject {
 		}
 	}
 	
-	// Sets the IP
-	public void setIP(int a1, int a2, int a3, int a4) {
-		ip[0] = a1;
-		ip[1] = a2;
-		ip[2] = a3;
-		ip[3] = a4;
-	}
 	
-	public int[] getIP() {
-		return ip;
-	}
-  
 	// Adds NAT Rule
-	public void newNATRule(NatRule rule) {
-		NatRules.add(rule);
-	}
-	/* inserts a rule to the top of the iptable of this device
-	 */
-	public void newFilterRule(FilterRule rule) {
-		FilterRules.add(0, rule);
-	}
+	public void newNATRule(NatRule rule) { NatRules.add(0,rule); }
+	// Remove NAT Rule
+	public void removeNATRule(NatRule rule) { NatRules.remove(rule); }
 	
-	// Deletes iptable rule
-	public void deleteRule(FilterRule rule) {
-		FilterRules.remove(rule);
-	}
+	// Adds Filter Rule
+	public void newFilterRule(FilterRule rule) { FilterRules.add(0, rule); }
+	// Deletes Filter Rule
+	public void deleteRule(FilterRule rule) { FilterRules.remove(rule); }
 	
-	/* Checks if the iptable rule exists. Returns true if it exists, returns
-	 * false if it does not.
-	 */
-	public boolean hasRule(Rule rule) {
-		return FilterRules.contains(rule);
-	}
-	
+	/* Device Updating */
 	// Update Device
 	public void update() {
 		// If Ping Setting is True, Ping Other Devices
@@ -193,11 +184,9 @@ public class Device extends NetworkObject {
 		
 		messagesReceived.update();
 	}
-	// Protocol Method
-	// Performs a protocol on a packet that has reached it
-	/* Checks if the packet matches any rules and drops or accepts it based on
-	 * the rule matched
-	 */
+	
+	/* Device Protocol */
+	// Performs a protocol on packets reaching the device, based on rules matched
 	public void protocol(Packet packet) {
 		// Decrease Traffic the Device Can Take by 1
 		traffic -= 1f;
@@ -211,13 +200,14 @@ public class Device extends NetworkObject {
 			this.packetsReceived++; 
 		} 
 		
+		// Resent Lost Packets
 		if (packet.getStatus() == Packet.Status.Lost) {
 			new Packet(packet.getSource(), packet.getDestination(), 
 					packet.getProtocol());
 			packet.setStatus(Status.Dead);
 		}
 	
-		// applies filter rules if applicable
+		// Apply Filter Rules (if applicable)
 	    for (FilterRule curRule : FilterRules) {
 	        // if there is a matching rule
 	        if (hasMatchingIP(packet, curRule) &&
@@ -258,22 +248,7 @@ public class Device extends NetworkObject {
 	        break;
 	      }
 	    
-	    // applies nat rules if applicablex
-	    applyNatRule(packet);
-	    
-
-		Device next;
-		
-		if ( packet.getDestination() == this ) {
-			next = null;
-		} else {
-			next = routePacket(packet.getDestination(), null);
-		}
-		
-		packet.nextDevice(next);
-	}
-	
-	public void applyNatRule(Packet packet) {
+	    // Apply NAT Rules (if applicable)
 		for (NatRule rule : NatRules) {
 			int[] oldIP = rule.getOldIP();
 			boolean match = true;
@@ -309,6 +284,17 @@ public class Device extends NetworkObject {
 				}
 			}
 		}
+	    
+		// Route packet to next device
+		Device next;
+		
+		if ( packet.getDestination() == this ) {
+			next = null;
+		} else {
+			next = routePacket(packet.getDestination(), null);
+		}
+		
+		packet.nextDevice(next);
 	}
 	
 	// Checks if the ip of the packet matches the ip of the rule, for both
@@ -336,6 +322,7 @@ public class Device extends NetworkObject {
 			if (ip2[i] != ip1[i])
 				result = false;
 		}
+		
 		return result;
 	}
 	
@@ -381,26 +368,6 @@ public class Device extends NetworkObject {
    }
 		
 	
-	public void dropPacket(Packet packet) {
-		
-	}
-	
-	public void acceptPacket(Packet packet) {
-
-	}
-	
-	// Instantiate device image
-	public static Image get_image() {
-		if ( device_image == null ) {
-			try {
-				device_image = new Image("res/Device.png");
-			} catch (SlickException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		return device_image;
-	}
 	
 	// Draw Method
 	@Override

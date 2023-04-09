@@ -15,6 +15,7 @@ import engine.Simulation;
 
 public class Packet extends NetworkObject {	
 	
+	// Packet Protocols
 	public enum Protocol { TCP, UDP }
 	
 	// Source Device and Destination Device (Final)
@@ -60,16 +61,69 @@ public class Packet extends NetworkObject {
 		source.protocol(this);
 	}
 	
-	// Gets Destination
+	/* Getters */
+	// Get Source Device
+	public Device getSource() { return source; }
+	public int[] getSourceIP() { return sourceIP; }
+	
+	// Get Destination Device
 	public Device getDestination() { return destination; }
+	public int[] getDestIP() { return destIP; }
 	
-	
-	// Get Message
+	// Get Packet Message
 	public String getMessage() { return message; }
+	// Get Packet Protocol
+	public Protocol getProtocol() { return protocol; }
 	
+	// Gets an Array of Strings Describing the Device
+	public void getInfo(ArrayList<String> info) {
+		info.add("Packet");
+		info.add("==========");
+		
+		if ( status == Status.Alive ) {
+			info.add("Source:" + source.ipString());
+			
+			info.add("Destination: " + destination.ipString());
+			
+			info.add("---");
+			
+			// Packet Protocol
+			String stringProtocol;
+			if ( protocol == Protocol.TCP ) {
+				stringProtocol = "TCP";
+			} else {
+				stringProtocol = "UDP";
+			}
+			info.add("Protocol: " + stringProtocol);	
+			
+			// Packet Message
+			info.add("Message: " + message); 
+			
+		} else if ( status == Status.Lost ) {
+			info.add("Packet LOST");
+			
+			if ( protocol == Protocol.TCP ) {
+				info.add("Resending...");
+			}
+		}
+		
+	}
+		
+	/* Setters */
 	// Sets the Next Device to Travel to
-	public void nextDevice(Device d) {
-		tempDestination = d;
+	public void nextDevice(Device d) { tempDestination = d; }
+	// Sets Packet Status
+	public void setStatus(Status status) { this.status = status; }
+	
+	// Set Packet Source IP
+	public void setSourceIP(int[] ip) {
+		sourceIP = ip;
+		source = Network.getInstance().searchForDevice(ip);
+	}
+	// Set Packet Destination IP
+	public void setDestIP(int[] ip) {
+		destIP = ip;
+		destination = Network.getInstance().searchForDevice(ip);
 	}
 	
 	// Packet Update
@@ -124,76 +178,6 @@ public class Packet extends NetworkObject {
 					Simulation.Screen(width / 2), Simulation.Screen(height / 2));
 		}
 		
-	}
-	
-	// Sets Packet Status
-	public void setStatus(Status status) {
-		this.status = status;
-	}
-	
-	/* Returns the source device of this packet
-	 */
-	public Device getSource() {
-		return source;
-	}
-	
-	public Protocol getProtocol() {
-		return protocol;
-	}
-	
-
-	// Gets an Array of Strings Describing the Device
-	public void getInfo(ArrayList<String> info) {
-		info.add("Packet");
-		info.add("==========");
-		
-		if ( status == Status.Alive ) {
-			info.add("Source:" + source.ipString());
-			
-			info.add("Destination: " + destination.ipString());
-			
-			info.add("---");
-			
-			// Packet Protocol
-			String stringProtocol;
-			if ( protocol == Protocol.TCP ) {
-				stringProtocol = "TCP";
-			} else {
-				stringProtocol = "UDP";
-			}
-			info.add("Protocol: " + stringProtocol);	
-			
-			// Packet Message
-			info.add("Message: " + message); 
-			
-		} else if ( status == Status.Lost ) {
-			info.add("Packet LOST");
-			
-			if ( protocol == Protocol.TCP ) {
-				info.add("Resending...");
-			}
-		}
-		
-		
-		
-	}
-
-	public int[] getSourceIP() {
-		return sourceIP;
-	}
-	
-	public int[] getDestIP() {
-		return destIP;
-	}
-	
-	public void setSourceIP(int[] ip) {
-		sourceIP = ip;
-		source = Network.getInstance().searchForDevice(ip);
-	}
-	
-	public void setDestIP(int[] ip) {
-		destIP = ip;
-		destination = Network.getInstance().searchForDevice(ip);
 	}
 	
 }
