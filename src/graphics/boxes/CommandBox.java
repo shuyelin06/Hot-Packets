@@ -16,6 +16,11 @@ import commandparsing.Prerouting;
 import core.Network;
 import core.objects.Device;
 import core.objects.Packet;
+import core.objects.Packet.Protocol;
+import core.protocols.FilterRule;
+import core.protocols.FilterRule.RuleType;
+import core.protocols.NatRule;
+import core.protocols.NatRule.NatType;
 import commandparsing.CommandParser.CommandType;
 import commandparsing.CreateDevice;
 import commandparsing.*;
@@ -112,23 +117,84 @@ public class CommandBox extends Box {
 			Device srcDevice;
 			Device destDevice;
 			
+			Device host;
+			
 			try {
 			switch ( type ) {
 				case PREROUTING:
 					Prerouting prting = new Prerouting(text);
 					
-
+					// Host Device
 					System.out.println("PREROUTING!");
+					host = Network.getInstance().searchForDevice(
+							Simulation.ArrayIP(prting.getHost()));
+					
+					// "Old" IP
+					int[] oldIP = Simulation.ArrayIP(prting.getOldIP());
+					// "New" IP
+					int[] newIP = Simulation.ArrayIP(prting.getNewIP());
+					
+					// Create Rule
+					NatRule ruleSNAT = new NatRule(NatType.SNAT, newIP, oldIP);
+					
+					host.newNATRule(ruleSNAT);
+					
 					break;
 					
 				case POSTROUTING:
 					Postrouting psting = new Postrouting(text);
-					System.out.println("POSTROUTING!");
+					
+					// Host Device
+					System.out.println("PREROUTING!");
+					host = Network.getInstance().searchForDevice(
+							Simulation.ArrayIP(psting.getHost()));
+					
+					// "Old" IP
+					int[] oldIP2 = Simulation.ArrayIP(psting.getOldIP());
+					// "New" IP
+					int[] newIP2 = Simulation.ArrayIP(psting.getNewIP());
+					
+					// Create Rule
+					NatRule ruleDNAT = new NatRule(NatType.DNAT, newIP2, oldIP2);
+					
+					host.newNATRule(ruleDNAT);
+					
 					break;
 					
 				case FILTER:
+					System.out.println("Filter!");
+					
 					Filter filter = new Filter(text);
-					System.out.println("FILTER!");
+					
+					// Host Device
+					host = Network.getInstance().searchForDevice(
+								Simulation.ArrayIP(filter.getHostDevice()));
+					
+					// Source IP
+					int[] src = Simulation.ArrayIP(filter.getRuleSource());
+					// Destination IP
+					int[] dest = Simulation.ArrayIP(filter.getRuleDest());
+					
+					// Protocol
+					Protocol protocol = filter.getProtocol().toLowerCase().equals("tcp")
+								? Protocol.TCP : Protocol.UDP;
+					
+					// Rule
+					RuleType rule = null;
+					String ruleString = filter.getRule().toLowerCase();
+					if ( ruleString.equals("accept") ) {
+						rule = RuleType.ACCEPT;
+					} else if ( ruleString.equals("reject") ) {
+						rule = RuleType.REJECT;
+					} else if ( ruleString.equals("drop") ) {
+						rule = RuleType.DROP;
+					}
+					
+					
+					FilterRule filterRule = 
+							new FilterRule(rule, src, dest, protocol);
+					host.newFilterRule(filterRule);
+					
 					break;
 					
 				case CREATEDEVICE:
@@ -172,34 +238,26 @@ public class CommandBox extends Box {
 					destDevice = Network.getInstance().searchForDevice(destIP);
 					
 					// Protocol
-					Packet.Protocol protocol = 
+					Packet.Protocol protocol2 = 
 						( sendPac.getProtocol().toLowerCase().equals("tcp") ? 
 								Packet.Protocol.TCP : Packet.Protocol.UDP );
 					
-					// Randomize Network
-					
 					// Create a Packet
-					new Packet(srcDevice, destDevice, protocol, Network.getInstance());
+					new Packet(srcDevice, destDevice, protocol2);
 					
 					break;
 					
 				case PING:
-					System.out.println("Ping");
-					
 					Ping ping = new Ping(text);
 					
 					// Find IP Address
 					srcIP = Simulation.ArrayIP(ping.getSourceIP());
 					
 					// Find Device
-					System.out.println("---");
 					for ( int i : srcIP ) { System.out.println(i); }
 					Device dev = Network.getInstance().searchForDevice(srcIP);
 					// Tell Device to Ping
 					dev.setPing(true);
-					
-					System.out.println(":)");
-					System.out.println(dev.getPing());
 					
 					break;
 					

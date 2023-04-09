@@ -188,10 +188,12 @@ public class Packet extends NetworkObject {
 	
 	public void setSourceIP(int[] ip) {
 		sourceIP = ip;
+		source = Network.getInstance().searchForDevice(ip);
 	}
 	
 	public void setDestIP(int[] ip) {
 		destIP = ip;
+		destination = Network.getInstance().searchForDevice(ip);
 	}
 	
 }

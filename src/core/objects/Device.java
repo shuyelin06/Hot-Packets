@@ -108,7 +108,6 @@ public class Device extends NetworkObject {
 	
 	public Color getColor() { return deviceColor; }
 	
-	public Color getColor() { return deviceColor; }
 	public boolean getPing() { return ping; }
 	// Returns a String Representing its IP
 	public String ipString() {
@@ -125,6 +124,9 @@ public class Device extends NetworkObject {
 		
 		info.add("---");
 		for ( Rule r : FilterRules ) {
+			r.getInfo(info);
+		}
+		for ( Rule r : NatRules ) {
 			r.getInfo(info);
 		}
 	}
@@ -148,14 +150,14 @@ public class Device extends NetworkObject {
 		return ip;
 	}
   
+	// Adds NAT Rule
+	public void newNATRule(NatRule rule) {
+		NatRules.add(rule);
+	}
 	/* inserts a rule to the top of the iptable of this device
 	 */
-	public void insertRule(FilterRule.RuleType rule, int[] sourceIP, 
-			int sNetmask, int[] destIP, int dNetmask, Packet.Protocol protocol) {
-		FilterRule newRule = new FilterRule(rule, sourceIP, sNetmask, destIP,
-				dNetmask, protocol);
-		if (!hasRule(newRule))
-			FilterRules.add(0, newRule);
+	public void newFilterRule(FilterRule rule) {
+		FilterRules.add(0, rule);
 	}
 	
 	// Deletes iptable rule
@@ -248,7 +250,7 @@ public class Device extends NetworkObject {
 	        break;
 	      }
 	    
-	    // applies nat rules if applicable
+	    // applies nat rules if applicablex
 	    applyNatRule(packet);
 	    
 
@@ -310,21 +312,19 @@ public class Device extends NetworkObject {
 		int[] destIP = packet.getDestIP();
 		int[] ruleSourceIP = rule.getSourceIP();
 		int[] ruleDestIP = rule.getDestIP();
-		int sNetmask = rule.getSNetmask();
-		int dNetmask = rule.getDNetmask();
 		
 		
-		if (ipIsInRange(ruleSourceIP, sNetmask, sourceIP) && 
-				ipIsInRange(ruleDestIP, dNetmask, destIP))
+		if (ipIsInRange(ruleSourceIP, sourceIP) && 
+				ipIsInRange(ruleDestIP, destIP))
 			result = true;
 			
 		return result;
 	}
 	
 	// Checks if ip2 is in the rage of ip1/netmask
-	private boolean ipIsInRange(int[] ip1, int netmask, int[] ip2) {
+	private boolean ipIsInRange(int[] ip1, int[] ip2) {
 		boolean result = true;
-		for (int i = 0; i < netmask / 8; i++) {
+		for (int i = 0; i < ip1.length; i++) {
 			if (ip2[i] != ip1[i])
 				result = false;
 		}

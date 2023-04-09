@@ -27,7 +27,6 @@ import core.protocols.FilterRule;
 import core.protocols.FilterRule.RuleType;
 import graphics.Box;
 import graphics.MessageBoard;
-import graphics.Text_Input;
 import graphics.boxes.CommandBox;
 import graphics.boxes.EscapeBox;
 import graphics.boxes.InfoBox;
@@ -68,9 +67,6 @@ public class Simulation extends BasicGameState {
 	// Convert from IP (Array) to String
 	public static String IPString(int[] ip) 
 		{ return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3]; }
-	// Convert from IP (Array) to String, Including CIDR
-	public static String IPStringCIDR(int[] ip) 
-	{ return IPString(ip) + "/" + ip[4]; }
 	
 	// Convert from Simulation to Screen Coordinates
 	public static float Screen(float val) 
@@ -216,8 +212,8 @@ public class Simulation extends BasicGameState {
 		new Packet(left, right, Packet.Protocol.TCP);
 		
 		//blocking package from going to man in the middle
-		center.insertRule(FilterRule.RuleType.DROP, left.getIP(), 32, 
-				man.getIP(), 32, Packet.Protocol.TCP);
+		center.newFilterRule(new FilterRule(RuleType.DROP, left.getIP(),
+				man.getIP(), Packet.Protocol.TCP));
 
 		
 		
@@ -260,38 +256,38 @@ public class Simulation extends BasicGameState {
 //		new Packet(one, six, Packet.Protocol.TCP);
 		
 		/* Central Node */
-//		Device centrality = new Device(0,0);
-//		centrality.setIP(10, 10, 10, 10);
-//		
-//		Device one = new Device(-45,20);
-//		Device two = new Device(-45,10);
-//		Device three = new Device(-45,0);
-//		Device four = new Device(-45,-10);
-//		Device five = new Device(-45,-20);
-//		
-//		one.addConnection(centrality);
-//		one.setIP(0, 0, 0, 0);
-//		two.addConnection(centrality);
-//		two.setIP(1, 1, 1, 1);
-//		three.addConnection(centrality);
-//		three.setIP(2, 2, 2, 2);
-//		four.addConnection(centrality);
-//		four.setIP(3, 3, 3, 3);
-//		five.addConnection(centrality);
-//		five.setIP(4, 4, 4, 4);
-//		
-//		Device output = new Device(20,0);
-//		output.setIP(5, 5, 5, 5);
-//		centrality.addConnection(output);
-//		
-//		Device clientOne = new Device(35,15);
-//		clientOne.setIP(6, 6, 6, 6);
-//		Device clientTwo = new Device(35,-15);
-//		clientTwo.setIP(7, 7, 7, 7);
-//		
-//		output.addConnection(clientOne);
-//		output.addConnection(clientTwo);
-//		
+		Device centrality = new Device(0,0);
+		centrality.setIP(10, 10, 10, 10);
+		
+		Device one = new Device(-45,20);
+		Device two = new Device(-45,10);
+		Device three = new Device(-45,0);
+		Device four = new Device(-45,-10);
+		Device five = new Device(-45,-20);
+		
+		one.addConnection(centrality);
+		one.setIP(0, 0, 0, 0);
+		two.addConnection(centrality);
+		two.setIP(1, 1, 1, 1);
+		three.addConnection(centrality);
+		three.setIP(2, 2, 2, 2);
+		four.addConnection(centrality);
+		four.setIP(3, 3, 3, 3);
+		five.addConnection(centrality);
+		five.setIP(4, 4, 4, 4);
+		
+		Device output = new Device(20,0);
+		output.setIP(5, 5, 5, 5);
+		centrality.addConnection(output);
+		
+		Device clientOne = new Device(35,15);
+		clientOne.setIP(6, 6, 6, 6);
+		Device clientTwo = new Device(35,-15);
+		clientTwo.setIP(7, 7, 7, 7);
+		
+		output.addConnection(clientOne);
+		output.addConnection(clientTwo);
+		
 //		centrality.insertRule(RuleType.DROP, one.getIP(), 32, centrality.getIP(), 0, Protocol.TCP);
 		
 		/* Middle-Man-Attack */

@@ -16,19 +16,13 @@ public enum RuleType { ACCEPT, REJECT, DROP }
 	// Holds the destination IP;
 	private int[] destIP;
 	
-	private int sNetmask;
-	private int dNetmask;
-	
 	// Holds the protocol that is filtered (TCP/UDP)
 	private Packet.Protocol protocol;
 
-	public FilterRule(RuleType rule, int[] sourceIP, int sNetmask, int[] destIP, 
-			int dNetmask, Packet.Protocol protocol) {
+	public FilterRule(RuleType rule, int[] sourceIP, int[] destIP, Packet.Protocol protocol) {
 		this.rule = rule;
 		this.sourceIP = sourceIP;
 		this.destIP = destIP;
-		this.sNetmask = sNetmask;
-		this.dNetmask = dNetmask;
 		this.protocol = protocol;
 	}
 	
@@ -46,8 +40,8 @@ public enum RuleType { ACCEPT, REJECT, DROP }
 		}
 		
 		info.add("  " + ruleType + ": " + (protocol == Packet.Protocol.TCP ? "TCP" : "UDP"));
-		info.add("  From: " + Simulation.IPStringCIDR(sourceIP) + "/" + sNetmask);
-		info.add("  To: " + Simulation.IPString(destIP) + "/" + dNetmask);
+		info.add("  From: " + Simulation.IPString(sourceIP));
+		info.add("  To: " + Simulation.IPString(destIP));
 	}
 	
 	// Returns rule (ACCEPT or DROP)
@@ -61,14 +55,6 @@ public enum RuleType { ACCEPT, REJECT, DROP }
 	
 	public int[] getDestIP() {
 		return destIP;
-	}
-	
-	public int getSNetmask() {
-		return sNetmask;
-	}
-	
-	public int getDNetmask() {
-		return dNetmask;
 	}
 	
 	public Packet.Protocol getProtocol() {

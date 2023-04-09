@@ -45,6 +45,7 @@ public class CommandParser {
 			if (psting.checkValidCommand()) type = CommandType.POSTROUTING;
 			else {
 				Filter filt = new Filter(userCommand);
+				System.out.println("Filter");
 				if (filt.checkValidCommand()) type = CommandType.FILTER;
 				else {
 					CreateDevice createDev = new CreateDevice(userCommand);

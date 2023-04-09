@@ -33,7 +33,7 @@ public class NatRule extends Rule {
 	public void getInfo(ArrayList<String> info) {
 		info.add("Rule - NAT");
 		info.add("  " + (natType == NatType.SNAT ? "SNAT" : "DNAT"));
-		info.add("  " + Simulation.IPStringCIDR(oldIP) + " -> " + Simulation.IPString(newIP));
+		info.add("  " + Simulation.IPString(oldIP) + " -> " + Simulation.IPString(newIP));
 	}
 	
 	public NatType getNatType() {
