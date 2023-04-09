@@ -1,6 +1,7 @@
 package core.objects;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 import org.newdawn.slick.Color;
@@ -10,9 +11,14 @@ import org.newdawn.slick.SlickException;
 
 import core.Network;
 import core.NetworkObject;
+import core.NetworkObject.Status;
 import core.geometry.Vector;
-import engine.Rule;
+import core.protocols.FilterRule;
+import core.protocols.NatRule;
+import core.protocols.Rule;
+import engine.Settings;
 import engine.Simulation;
+import graphics.MessageBoard;
 
 /*
  * Device Class:
@@ -26,7 +32,9 @@ public class Device extends NetworkObject {
 	private ArrayList<Device> connections;
 	
 	// List of iptable filter rules
-	private ArrayList<Rule> rules;
+	private ArrayList<FilterRule> FilterRules;
+	
+	private ArrayList<NatRule> NatRules;
 	
 	// Device Information
 	private String name;
@@ -44,12 +52,28 @@ public class Device extends NetworkObject {
 	// Device Color Representation
 	private Color deviceColor;
 	
+	// Traffic - Controls how many packets
+	// a device can take at a time.
+	private float traffic;
+	
+	/* Device Statistics */
+	private MessageBoard messagesReceived; 	// Messages (Recently) Received
+	
+	private int packetsSent; // Packets Sent Through Device
+	private int packetsReceived; // Packets Received
+	
 	// Constructor
 	public Device(float x, float y) {
 		super();
 		
 		// Add to Network
 		Network.getInstance().addDevice(this);
+		
+		// Statistics
+		messagesReceived = new MessageBoard(Color.green);
+		
+		packetsReceived = 0;
+		packetsSent = 0;
 		
 		// Set Postion
 		position.x = x;
@@ -58,8 +82,11 @@ public class Device extends NetworkObject {
 		// Initialize Variables
 		ping = false;
 		
-		rules = new ArrayList<>();
+		FilterRules = new ArrayList<>();
+		NatRules = new ArrayList<>();
 		connections = new ArrayList<>();
+		
+		traffic = 0f;
 		
 		name = "NULL";
 		
@@ -77,6 +104,9 @@ public class Device extends NetworkObject {
 	public Device setName(String name) { this.name = name; 	return this; }
 	// Set if the Device Should Ping
 	public Device setPing(boolean ping) { this.ping = ping; return this; }
+	public boolean congested() { return traffic < 1f; }
+	
+	public Color getColor() { return deviceColor; }
 	
 	public Color getColor() { return deviceColor; }
 	public boolean getPing() { return ping; }
@@ -90,6 +120,13 @@ public class Device extends NetworkObject {
 		info.add("Device");
 		info.add("==========");
 		info.add("IP: " + ipString());
+		info.add("Packets Sent: " + packetsSent);
+		info.add("Packets Received: " + packetsReceived);
+		
+		info.add("---");
+		for ( Rule r : FilterRules ) {
+			r.getInfo(info);
+		}
 	}
 		
 	// Adds an Outgoing Connection
@@ -113,55 +150,78 @@ public class Device extends NetworkObject {
   
 	/* inserts a rule to the top of the iptable of this device
 	 */
-	public void insertRule(Rule.RuleType rule, int[] sourceIP, int netmask,
-			Packet.Protocol protocol) {
-		Rule newRule = new Rule(rule, sourceIP, netmask, protocol);
+	public void insertRule(FilterRule.RuleType rule, int[] sourceIP, 
+			int sNetmask, int[] destIP, int dNetmask, Packet.Protocol protocol) {
+		FilterRule newRule = new FilterRule(rule, sourceIP, sNetmask, destIP,
+				dNetmask, protocol);
 		if (!hasRule(newRule))
-			rules.add(0, newRule);
-	}
-	
-	/* Appends a rule to the end of the iptable of this device
-	 */
-	public void appendRule(Rule.RuleType rule, int[] sourceIP, int netmask, 
-			Packet.Protocol protocol) {
-		Rule newRule = new Rule(rule, sourceIP, netmask, protocol);
-		if (!hasRule(newRule))
-			rules.add(newRule);
+			FilterRules.add(0, newRule);
 	}
 	
 	// Deletes iptable rule
-	public void deleteRule(Rule rule) {
-		rules.remove(rule);
+	public void deleteRule(FilterRule rule) {
+		FilterRules.remove(rule);
 	}
 	
 	/* Checks if the iptable rule exists. Returns true if it exists, returns
 	 * false if it does not.
 	 */
 	public boolean hasRule(Rule rule) {
-		return rules.contains(rule);
+		return FilterRules.contains(rule);
 	}
 	
+	// Update Device
+	public void update() {
+		traffic += Settings.Max_Traffic;
+		if ( Settings.Max_Traffic > 1f) {
+			if ( traffic > Settings.Max_Traffic )
+				traffic = Settings.Max_Traffic;
+		} else {
+			if ( traffic > 1f ) 
+				traffic = 1f;
+		}
+		
+		messagesReceived.update();
+	}
 	// Protocol Method
 	// Performs a protocol on a packet that has reached it
 	/* Checks if the packet matches any rules and drops or accepts it based on
 	 * the rule matched
 	 */
 	public void protocol(Packet packet) {
+		// Decrease Traffic the Device Can Take by 1
+		traffic -= 1f;
+		
+		/* Increment Device Statistics */
+		if ( packet.getSource() == this ) { 
+			this.packetsSent++; 
+		} 
+		if ( packet.getDestination() == this ) {
+			messagesReceived.addMessage(packet.getMessage());
+			this.packetsReceived++; 
+		} 
+		
+		if (packet.getStatus() == Packet.Status.Lost) {
+			new Packet(packet.getSource(), packet.getDestination(), 
+					packet.getProtocol());
+			packet.setStatus(Status.Dead);
+		}
 	
-	    for (Rule curRule : rules) {
+		// applies filter rules if applicable
+	    for (FilterRule curRule : FilterRules) {
 	        // if there is a matching rule
-	        if (hasMatchingIP(packet, curRule) && 
+	        if (hasMatchingIP(packet, curRule) &&
 	            packet.getProtocol() == (curRule.getProtocol())) {
 	
 	          // TCP protocol
 	          if (packet.getProtocol() == Packet.Protocol.TCP) {
 	
 	            // DROP (silently delete)
-	            if (curRule.getRule() == Rule.RuleType.DROP) {
+	            if (curRule.getRule() == FilterRule.RuleType.DROP) {
 	              packet.setStatus(Status.Dead);
 	
 	            // REJECT (notify of deletion)
-	            } else if (curRule.getRule() == Rule.RuleType.REJECT) {
+	            } else if (curRule.getRule() == FilterRule.RuleType.REJECT) {
 	            	packet.setStatus(Status.Dead);
 	              // notify source device that it was rejected
 	
@@ -174,11 +234,11 @@ public class Device extends NetworkObject {
 	          } else if (packet.getProtocol() == Packet.Protocol.UDP) {
 	
 	            // DROP (silently delete)
-	            if (curRule.getRule() == Rule.RuleType.DROP) {
+	            if (curRule.getRule() == FilterRule.RuleType.DROP) {
 	            	packet.setStatus(Status.Dead);
 	
 	            // REJECT (silently delete)
-	            } else if (curRule.getRule() == Rule.RuleType.REJECT) {
+	            } else if (curRule.getRule() == FilterRule.RuleType.REJECT) {
 	            	packet.setStatus(Status.Dead);
 	
 	            } // No ACCEPT option, because accept does nothing
@@ -187,6 +247,9 @@ public class Device extends NetworkObject {
 	        }
 	        break;
 	      }
+	    
+	    // applies nat rules if applicable
+	    applyNatRule(packet);
 	    
 
 		Device next;
@@ -200,36 +263,71 @@ public class Device extends NetworkObject {
 		packet.nextDevice(next);
 	}
 	
-	// Checks if the ip of the packet matches the ip of the rule
-	private boolean hasMatchingIP(Packet packet, Rule rule) {
+	public void applyNatRule(Packet packet) {
+		for (NatRule rule : NatRules) {
+			int[] oldIP = rule.getOldIP();
+			boolean match = true;
+			
+			// SNAT
+			if (rule.getNatType() == NatRule.NatType.SNAT) {
+				int[] packetIP = packet.getSourceIP();
+				
+				// Checks if IPs match
+				for (int i = 0; i < oldIP.length; i++) {
+					if (oldIP[i] != packetIP[i])
+						match = false;
+				}
+				// IPs match, need to perform snat
+				if (match) {
+					packet.setSourceIP(rule.getNewIP());
+					return;
+				}
+				
+			// DNAT
+			} else if (rule.getNatType() == NatRule.NatType.DNAT) {
+				int[] packetIP = packet.getDestIP();
+				
+				// Checks if IPs match
+				for (int i = 0; i < oldIP.length; i++) {
+					if (oldIP[i] != packetIP[i])
+						match = false;
+				}
+				// IPs match, need to perform dnat
+				if (match) {
+					packet.setDestIP(rule.getNewIP());
+					return;
+				}
+			}
+		}
+	}
+	
+	// Checks if the ip of the packet matches the ip of the rule, for both
+	// source and destination IPs of the packet
+	private boolean hasMatchingIP(Packet packet, FilterRule rule) {
 		boolean result = false;
 		
 		int[] sourceIP = packet.getSourceIP();
-		int[] ruleIP = rule.getSourceIP();
-		int netmask = rule.getNetmask();
-
-		if (netmask == 0) {
-			result = true;
+		int[] destIP = packet.getDestIP();
+		int[] ruleSourceIP = rule.getSourceIP();
+		int[] ruleDestIP = rule.getDestIP();
+		int sNetmask = rule.getSNetmask();
+		int dNetmask = rule.getDNetmask();
 		
-		} else if (netmask == 8) {
-			if (sourceIP[0] == ruleIP[0])
-				result = true;
-				
-		} else if (netmask == 16) {
-			if (sourceIP[0] == ruleIP[0] && sourceIP[1] == ruleIP[1])
-				result = true;
+		
+		if (ipIsInRange(ruleSourceIP, sNetmask, sourceIP) && 
+				ipIsInRange(ruleDestIP, dNetmask, destIP))
+			result = true;
 			
-		} else if (netmask == 24) {
-			if (sourceIP[0] == ruleIP[0] && sourceIP[1] == ruleIP[1] &&
-					sourceIP[2] == ruleIP[2])
-				result = true;
-			
-		} else if (netmask == 32) {
-			if (sourceIP[0] == ruleIP[0] && sourceIP[1] == ruleIP[1] &&
-					sourceIP[2] == ruleIP[2] && sourceIP[3] == ruleIP[3])
-				result = true;
+		return result;
+	}
+	
+	// Checks if ip2 is in the rage of ip1/netmask
+	private boolean ipIsInRange(int[] ip1, int netmask, int[] ip2) {
+		boolean result = true;
+		for (int i = 0; i < netmask / 8; i++) {
+			if (ip2[i] != ip1[i])
+				result = false;
 		}
-			
 		return result;
 	}
 	
@@ -244,14 +342,18 @@ public class Device extends NetworkObject {
 			visited = new HashSet<Device>();
 		}
 		
+		// Randomize the pathfinding
+		Collections.shuffle(connections);
+		
 		for ( Device d : connections ) {
-			if ( visited != null && visited.contains(d) ) {
+			if (visited.contains(d) ) {
 				continue;
 			} else {
 				visited.add(d);
 				if ( d.routePacket(destination, visited) != null ) {
 					return d;
 				} 
+				visited.remove(d);
 			}
 			
 		}
@@ -294,7 +396,7 @@ public class Device extends NetworkObject {
 	
 	// Draw Method
 	@Override
-	public void draw(Graphics g) {
+	public void draw(Graphics g) {		
 		// Instantiate device image
 		Image scaledDeviceImg = get_image().getScaledCopy(
 				(int)Simulation.Screen(width), (int)Simulation.Screen(height));
@@ -308,12 +410,17 @@ public class Device extends NetworkObject {
 		for ( Device dest : connections ) {
 			drawEdge(dest, g);
 		}
+		
+		// Draw Received Messages
+		messagesReceived.render(g, 
+			Simulation.ScreenX(position.x + width / 2), 
+			Simulation.ScreenY(position.y + height / 2));
 	}
 	
 	// Draw Edge
 	private void drawEdge(Device d, Graphics g) {
 		g.setColor(new Color(211, 211, 211, 200));
-		g.setLineWidth(4);
+		g.setLineWidth(Settings.Pixels_Per_Unit / 2.5f);
 		
 		// Get direction to destination
 		Vector direction = position.directionTo(d.position);

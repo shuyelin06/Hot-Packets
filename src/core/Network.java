@@ -2,6 +2,7 @@ package core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Stack;
 
 import org.newdawn.slick.Graphics;
 
@@ -29,19 +30,32 @@ public class Network {
 	// All devices in the network
 	private ArrayList<Device> devices;
 	
+	// Stack of new devices to be added
+	private Stack<Device> newDevices;
+	
 	// All packets in the network
 	private ArrayList<Packet> packets;
+	
+	// Stack of new packets to be added
+	private Stack<Packet> newPackets;
 	
 	// Constructor
 	public Network() {
 		devices = new ArrayList<>();
 		packets = new ArrayList<>();
+		
+		newPackets = new Stack<>();
+		newDevices = new Stack<>();
 	}
 	
 	// Add a Device
-	public void addDevice(Device d) { devices.add(d); }
+	public void addDevice(Device d) { 
+		newDevices.push(d); 
+		devices.add(newDevices.pop()); 
+	}
+	
 	// Add a Packet
-	public void addPacket(Packet p) { packets.add(p); }
+	public void addPacket(Packet p) { newPackets.push(p); }
 	
 	// Search Device Method - Searches for a Device Matching
 	// an IP Address
@@ -78,18 +92,30 @@ public class Network {
 	// Send Packet Method - Selects 2 Nodes to Send a Packet Between
 	public void sendPacket() {
 		int rand1 = (int) (Math.random() * devices.size());
-		int rand2 = (int) (Math.random() * 3 + 1);
+		int rand2 = (int) (Math.random() * 4 + 1);
 		
-		new Packet(
-				devices.get(rand1), devices.get(rand1).randomConnection(rand2),
-				Packet.Protocol.TCP, this);
+		Device source = devices.get(rand1);
+		Device destination = source.randomConnection(rand2);
+		
+		// Prevent a device from sending a packet to itself
+		if ( source != destination ) { 
+			new Packet(source, destination, Packet.Protocol.TCP);
+		}
+		
 	}
 	
 	// Update Method
 	public void update() {
+		while (!newPackets.isEmpty()) {
+			packets.add(newPackets.pop());
+		}
+			
 		// Update all Packets
 		for ( Packet p : packets ) {
 			p.update();
+		}
+		for ( Device d : devices ) {
+			d.update();
 		}
 		
 		// Clean-Up Dead Packets and Devices
@@ -111,9 +137,5 @@ public class Network {
 		}
 	}
 	
-	// Removes a packet from the network if it were rejected/dropped 
-	public void deletePacket(Packet packet) {
-		System.out.println("Packet deleted");
-		packets.remove(packet);
-	}
+
 }

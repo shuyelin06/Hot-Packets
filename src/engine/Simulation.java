@@ -22,8 +22,14 @@ import core.Network;
 import core.geometry.Vector;
 import core.objects.Device;
 import core.objects.Packet;
+import core.objects.Packet.Protocol;
+import core.protocols.FilterRule;
+import core.protocols.FilterRule.RuleType;
 import graphics.Box;
+import graphics.MessageBoard;
+import graphics.Text_Input;
 import graphics.boxes.CommandBox;
+import graphics.boxes.EscapeBox;
 import graphics.boxes.InfoBox;
 import graphics.boxes.MouseBox;
 import graphics.boxes.SliderBox;
@@ -58,6 +64,13 @@ public class Simulation extends BasicGameState {
 		
 		return convertedIP;
 	}
+
+	// Convert from IP (Array) to String
+	public static String IPString(int[] ip) 
+		{ return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3]; }
+	// Convert from IP (Array) to String, Including CIDR
+	public static String IPStringCIDR(int[] ip) 
+	{ return IPString(ip) + "/" + ip[4]; }
 	
 	// Convert from Simulation to Screen Coordinates
 	public static float Screen(float val) 
@@ -75,6 +88,14 @@ public class Simulation extends BasicGameState {
 	public static float SimY(float y) 
 		{ return -(y - Settings.Screen_Height / 2) / Settings.Pixels_Per_Unit + simulation.center.y; }
 		
+	// Returns a New Font for Use
+	public static UnicodeFont getNewFont(String fontName , int fontSize){
+		UnicodeFont returnFont = new UnicodeFont(new Font(fontName, Font.PLAIN, fontSize));
+		returnFont.addAsciiGlyphs();
+		returnFont.getEffects().add(new ColorEffect(java.awt.Color.green));
+		return returnFont;
+	}	
+	
 	/* Variables for Simulation */
 	// Simulation Mode 
 	public enum Mode { Random, User }
@@ -99,6 +120,7 @@ public class Simulation extends BasicGameState {
 	private InfoBox infoBox; // Information Box (Displays Information)
 	private SliderBox simulationBox; // Simulation (Settings) Box
 	private CommandBox commandBox; // Command Box
+	private EscapeBox escapeIcon; // Escape Button
 
 	// Constructor
 	public Simulation(int id) { 
@@ -117,14 +139,21 @@ public class Simulation extends BasicGameState {
 		network = Network.getInstance();
 
 		// Initialize Center
-		center = new Vector(30, 30);
-				
+		center = new Vector(0, 0);
 		
 		// Set Simulation Mode
 		simulationMode = Mode.Random;
 				
 		// Initialize Boxes
 		boxes = new ArrayList<>();
+		
+		escapeIcon = new EscapeBox(arg0);
+		escapeIcon
+			.setX(0)
+			.setY(0)
+			.setWidth(20)
+			.setHeight(20)
+			.initialize();		
 		
 		mouseBox = new MouseBox(input);
 		mouseBox
@@ -136,65 +165,146 @@ public class Simulation extends BasicGameState {
 		
 		infoBox = new InfoBox(); // Add InfoBox
 		infoBox
-			.setX(Settings.Screen_Width - 100)
-			.setY(475)
-			.setWidth(150)
-			.setHeight(200)
+			.setX(0.896f * Settings.Screen_Width)
+			.setY(0.667f * Settings.Screen_Height)
+			.setWidth(0.174f * Settings.Screen_Width)
+			.setHeight(0.333f * Settings.Screen_Height)
 			.initialize();
 		
 		simulationBox = new SliderBox();
 		simulationBox
-			.setX(Settings.Screen_Width - 100)
-			.setY(200)
-			.setWidth(150)
-			.setHeight(300)
+			.setX(0.931f * Settings.Screen_Width)
+			.setY(0.25f * Settings.Screen_Height)
+			.setWidth(0.107f * Settings.Screen_Width)
+			.setHeight(0.335f * Settings.Screen_Height)
 			.initialize();
 		
 		commandBox = new CommandBox(arg0, input);
 		commandBox
-			.setX(Settings.Screen_Width / 2)
-			.setY(Settings.Screen_Height * 0.9f)
-			.setWidth(Settings.Screen_Width * 0.95f)
-			.setHeight(Settings.Screen_Height * 0.055f)
+			.setX(0.5f * Settings.Screen_Width)
+			.setY(0.9f * Settings.Screen_Height)
+			.setWidth(0.95f * Settings.Screen_Width)
+			.setHeight(0.055f * Settings.Screen_Height)
 			.initialize();
+		
+
 		
 		boxes.add(mouseBox);
 		boxes.add(infoBox);
 		boxes.add(simulationBox);
 		boxes.add(commandBox);
+		boxes.add(escapeIcon);
+
+		
 		
 		// Start Tracking Time
 		time = System.currentTimeMillis();
 
-		/* Testing */
-		Device one = new Device(5, 50);
-		one.setIP(1, 2, 3, 4);
-		Device two = new Device(45, 75);
-		two.setIP(1, 3, 5, 7);
-		Device three = new Device(70, 30);
-		three.setIP(1, 1, 2, 3);
-		Device four = new Device(100, 45);
-		four.setIP(2, 4, 6, 8);
-		Device five = new Device(120, 70);
+		/*Man-In-The-Middle*/
+		Device man = new Device(0, -30);
+		man.setIP(0, 0, 0, 0);
+		Device center = new Device(0,0);
+		center.setIP(1, 1, 1, 1);
+		Device left = new Device(-30,0);
+		left.setIP(2, 2, 2, 2);
+		Device right = new Device(30, 0);
+		right.setIP(3, 3, 3, 3);
 		
-		five.setIP(3, 6, 9, 12);
-		two.insertRule(Rule.RuleType.DROP, one.getIP(), 32, Packet.Protocol.TCP);
+		left.addConnection(center);
+		center.addConnection(man);
+		center.addConnection(right);
+		new Packet(left, right, Packet.Protocol.TCP);
 		
-		one.addConnection(two);
-		two.addConnection(three);
+		//blocking package from going to man in the middle
+		center.insertRule(FilterRule.RuleType.DROP, left.getIP(), 32, 
+				man.getIP(), 32, Packet.Protocol.TCP);
 
-		two.addConnection(four);
-		four.addConnection(five);
-		five.addConnection(one);
 		
-		new Packet(one, two, Packet.Protocol.TCP, network);
+		
+		/* Big Web */
+//		Device one = new Device(-65, 10);
+//		one.setIP(1, 2, 3, 4);
+//		Device two = new Device(-25, 35);
+//		two.setIP(1, 3, 5, 7);
+//		Device three = new Device(0, -10);
+//		three.setIP(1, 1, 2, 3);
+//		Device four = new Device(30, 5);
+//		four.setIP(2, 4, 6, 8);
+//		Device five = new Device(50, 30);
+//		five.setIP(3, 6, 9, 12);
+//		Device six = new Device(0, 30);
+//		six.setIP(4, 2, 1, 2);
+//		Device seven = new Device(-50,-10);
+//		seven.setIP(5, 2, 4, 2);
+//  		
+//		two.insertRule(FilterRule.RuleType.DROP, one.getIP(), 32, 
+//				two.getIP(), 32, Packet.Protocol.TCP);
+//		
+//		one.addConnection(two);
+//		one.addConnection(six);
+//		
+//		two.addConnection(three);
+//		two.addConnection(four);
+//		
+//		two.addConnection(five);
+//		seven.addConnection(five);
+//		three.addConnection(five);
+//		four.addConnection(five);
+//		
+//		five.addConnection(one);
+//		
+//		six.addConnection(three);
+//		
+//		new Packet(one, two, Packet.Protocol.TCP);
+//		
+//		new Packet(one, six, Packet.Protocol.TCP);
+		
+		/* Central Node */
+//		Device centrality = new Device(0,0);
+//		centrality.setIP(10, 10, 10, 10);
+//		
+//		Device one = new Device(-45,20);
+//		Device two = new Device(-45,10);
+//		Device three = new Device(-45,0);
+//		Device four = new Device(-45,-10);
+//		Device five = new Device(-45,-20);
+//		
+//		one.addConnection(centrality);
+//		one.setIP(0, 0, 0, 0);
+//		two.addConnection(centrality);
+//		two.setIP(1, 1, 1, 1);
+//		three.addConnection(centrality);
+//		three.setIP(2, 2, 2, 2);
+//		four.addConnection(centrality);
+//		four.setIP(3, 3, 3, 3);
+//		five.addConnection(centrality);
+//		five.setIP(4, 4, 4, 4);
+//		
+//		Device output = new Device(20,0);
+//		output.setIP(5, 5, 5, 5);
+//		centrality.addConnection(output);
+//		
+//		Device clientOne = new Device(35,15);
+//		clientOne.setIP(6, 6, 6, 6);
+//		Device clientTwo = new Device(35,-15);
+//		clientTwo.setIP(7, 7, 7, 7);
+//		
+//		output.addConnection(clientOne);
+//		output.addConnection(clientTwo);
+//		
+//		centrality.insertRule(RuleType.DROP, one.getIP(), 32, centrality.getIP(), 0, Protocol.TCP);
+		
+		/* Middle-Man-Attack */
+		
+		
+		
 	}
 
 	@Override
 	public void render(GameContainer arg0, StateBasedGame arg1, Graphics g) throws SlickException {
 		// Render Simulation
 		network.draw(g);
-
+		
 		// Draw Boxes
 		for ( Box b : boxes ) {
 			b.draw(g);
@@ -204,6 +314,9 @@ public class Simulation extends BasicGameState {
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {	
+	
+		
+		
 		/* Process User Keyboard Input */
 		// Packet Generating P
 		if ( arg0.getInput().isKeyDown(Input.KEY_P) ) {

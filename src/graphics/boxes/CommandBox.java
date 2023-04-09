@@ -42,7 +42,7 @@ public class CommandBox extends Box {
 		this.container = container;
 		this.input = input;
 		
-		font = getNewFont("Courier New " , 37);
+		font = Simulation.getNewFont("Courier New " , 37);
 	}
 
 	// Initialize the Text Fields and Font
@@ -67,14 +67,6 @@ public class CommandBox extends Box {
 				(int) (height));
 		
 	}
-	
-	// Creates a New Font for the Command
-	public UnicodeFont getNewFont(String fontName , int fontSize){
-		UnicodeFont returnFont = new UnicodeFont(new Font(fontName, Font.PLAIN, fontSize));
-		returnFont.addAsciiGlyphs();
-		returnFont.getEffects().add(new ColorEffect(java.awt.Color.green));
-		return returnFont;
-	}	
 	
 	@Override
 	protected void mouseClick(float mouseX, float mouseY) { }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 
+import core.DemoQuestions;
 import core.Network;
 import core.NetworkObject;
 import core.NetworkObject.Status;
@@ -21,6 +22,7 @@ public class Packet extends NetworkObject {
 	private Device destination;
 	
 	private int[] sourceIP;
+	private int[] destIP;
 	
 	// Protocol used to send packet (TCP or UDP)
 	private Protocol protocol;
@@ -28,8 +30,11 @@ public class Packet extends NetworkObject {
 	// Device Packet is Currently Traveling to
 	private Device tempDestination;
 	
+	// Message the Packet is Carrying 
+	private String message;
+	
 	// Constructor
-	public Packet(Device source, Device destination, Protocol protocol, Network network) {
+	public Packet(Device source, Device destination, Protocol protocol) {
 		super();
 		
 		// Add to Network
@@ -40,7 +45,10 @@ public class Packet extends NetworkObject {
 		this.destination = destination;
 		this.protocol = protocol;
 		
-		sourceIP = source.getIP();
+		sourceIP = source.getIP(); 		// Source IP
+		destIP = destination.getIP(); 	// Destination IP
+		
+		message = DemoQuestions.randomString(); 	// Empty Message
 		
 		// Set Position
 		this.position = source.getPosition();
@@ -49,12 +57,15 @@ public class Packet extends NetworkObject {
 		this.width = 1.5f;
 		this.height = 1.5f;
 		
-		// Temp
 		source.protocol(this);
 	}
 	
 	// Gets Destination
 	public Device getDestination() { return destination; }
+	
+	
+	// Get Message
+	public String getMessage() { return message; }
 	
 	// Sets the Next Device to Travel to
 	public void nextDevice(Device d) {
@@ -63,30 +74,43 @@ public class Packet extends NetworkObject {
 	
 	// Packet Update
 	public void update() {
-		if ( tempDestination == null ) {
-			status = Status.Dead;
-			return;
-		}
 		
-		// 15% chance of packet getting lost
-        if (Math.random() < 0.001) {
-        	setStatus(Status.Dead);
-          return;
-        }
+		if (status != Status.Dead) {
 		
-		// Obtain Direction to Destination
-		Vector direction = position.directionTo(tempDestination.getPosition());
-		
-		// Obtain Speed of Packet
-		Vector speed = direction.scalarMultiply(Settings.Packet_Speed);
-		
-		// Move to Destination
-		position.x += speed.x;
-		position.y += speed.y;
+			if ( tempDestination == null ) {
+				status = Status.Dead;
+				return;
+			}
+			
+			// small chance of packet getting lost, change to 0.001 for final
+	        if (Math.random() < 0.001) {
+	        	if (protocol == Protocol.TCP) {
+	        		setStatus(Status.Lost);
+	        		
+	        	} else if (protocol == Protocol.UDP) {
+	        		setStatus(Status.Dead);
 	
-		// When Packet Reaches Destination
-		if ( position.distance(tempDestination.getPosition()) < 1f ) {
-			tempDestination.protocol(this);
+	        	}
+	        }
+			
+        	// Obtain Direction to Destination
+			Vector direction = position.directionTo(tempDestination.getPosition());
+			
+			// Obtain Speed of Packet
+			Vector speed = direction.scalarMultiply(Settings.Packet_Speed);
+			if ( tempDestination.congested() ) {
+				speed = speed.scalarMultiply(0.2f);
+			}
+			
+			// Move to Destination
+			position.x += speed.x;
+			position.y += speed.y;
+		
+			// When Packet Reaches Destination
+			if (position.distance(tempDestination.getPosition()) < 1f ) {
+				tempDestination.protocol(this);
+			}
+			
 		}
 	}
 	
@@ -124,22 +148,30 @@ public class Packet extends NetworkObject {
 		info.add("==========");
 		
 		if ( status == Status.Alive ) {
-			info.add("Source:");
-			info.add("  " + source.ipString());
+			info.add("Source:" + source.ipString());
 			
-			info.add("Destination:");
-			info.add("  " + destination.ipString());
+			info.add("Destination: " + destination.ipString());
 			
-			info.add("Protocol: ");
+			info.add("---");
 			
+			// Packet Protocol
+			String stringProtocol;
 			if ( protocol == Protocol.TCP ) {
-				info.add("  TCP");
+				stringProtocol = "TCP";
 			} else {
-				info.add("  UDP");
+				stringProtocol = "UDP";
 			}
+			info.add("Protocol: " + stringProtocol);	
+			
+			// Packet Message
+			info.add("Message: " + message); 
+			
 		} else if ( status == Status.Lost ) {
 			info.add("Packet LOST");
-			info.add("Resending...");
+			
+			if ( protocol == Protocol.TCP ) {
+				info.add("Resending...");
+			}
 		}
 		
 		
@@ -148,6 +180,18 @@ public class Packet extends NetworkObject {
 
 	public int[] getSourceIP() {
 		return sourceIP;
+	}
+	
+	public int[] getDestIP() {
+		return destIP;
+	}
+	
+	public void setSourceIP(int[] ip) {
+		sourceIP = ip;
+	}
+	
+	public void setDestIP(int[] ip) {
+		destIP = ip;
 	}
 	
 }
