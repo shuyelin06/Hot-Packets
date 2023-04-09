@@ -83,7 +83,7 @@ public class Packet extends NetworkObject {
 			}
 			
 			// small chance of packet getting lost, change to 0.001 for final
-	        if (Math.random() < 0.001) {
+	        if (Math.random() < 0.0001) {
 	        	if (protocol == Protocol.TCP) {
 	        		setStatus(Status.Lost);
 	        		

@@ -51,6 +51,7 @@ public class DemoQuestions {
 		"Capital One was founded in 1994",
 		"Capital One HQ is at McLean, VA",
 		"Capital One helps find the right credit cards",
+		"Capital One is a tech company",
 		"Capital One specializes in credit cards",
 		"Capital One is an American Bank",
 		"Capital One is among the 10 U.S. banks by assets",
@@ -89,7 +90,7 @@ public class DemoQuestions {
 			
 
 	
-	public final static ArrayList<String> array = Money;
+	public final static ArrayList<String> array = CipherTech;
 	
 	public static String randomString() { 
 		if ( array != null ) {

@@ -25,6 +25,8 @@ import core.objects.Packet;
 import core.objects.Packet.Protocol;
 import core.protocols.FilterRule;
 import core.protocols.FilterRule.RuleType;
+import core.protocols.NatRule;
+import core.protocols.NatRule.NatType;
 import graphics.Box;
 import graphics.MessageBoard;
 import graphics.boxes.CommandBox;
@@ -196,24 +198,24 @@ public class Simulation extends BasicGameState {
 		// Start Tracking Time
 		time = System.currentTimeMillis();
 
-		/*Man-In-The-Middle*/
-		Device man = new Device(0, -30);
-		man.setIP(0, 0, 0, 0);
-		Device center = new Device(0,0);
-		center.setIP(1, 1, 1, 1);
-		Device left = new Device(-30,0);
-		left.setIP(2, 2, 2, 2);
-		Device right = new Device(30, 0);
-		right.setIP(3, 3, 3, 3);
-		
-		left.addConnection(center);
-		center.addConnection(man);
-		center.addConnection(right);
-		new Packet(left, right, Packet.Protocol.TCP);
-		
-		//blocking package from going to man in the middle
-		center.newFilterRule(new FilterRule(RuleType.DROP, left.getIP(),
-				man.getIP(), Packet.Protocol.TCP));
+//		/*Man-In-The-Middle*/
+//		Device man = new Device(0, -30);
+//		man.setIP(0, 0, 0, 0);
+//		Device center = new Device(0,0);
+//		center.setIP(1, 1, 1, 1);
+//		Device left = new Device(-30,0);
+//		left.setIP(2, 2, 2, 2);
+//		Device right = new Device(30, 0);
+//		right.setIP(3, 3, 3, 3);
+//		
+//		left.addConnection(center);
+//		center.addConnection(man);
+//		center.addConnection(right);
+//		new Packet(left, right, Packet.Protocol.TCP);
+//		
+//		//blocking package from going to man in the middle
+//		center.newFilterRule(new FilterRule(RuleType.DROP, left.getIP(),
+//				man.getIP(), Packet.Protocol.TCP));
 
 		
 		
@@ -233,8 +235,8 @@ public class Simulation extends BasicGameState {
 //		Device seven = new Device(-50,-10);
 //		seven.setIP(5, 2, 4, 2);
 //  		
-//		two.insertRule(FilterRule.RuleType.DROP, one.getIP(), 32, 
-//				two.getIP(), 32, Packet.Protocol.TCP);
+//		two.newFilterRule(new FilterRule(FilterRule.RuleType.DROP, one.getIP(), 
+//				two.getIP(), Packet.Protocol.TCP));
 //		
 //		one.addConnection(two);
 //		one.addConnection(six);
@@ -265,6 +267,12 @@ public class Simulation extends BasicGameState {
 		Device four = new Device(-45,-10);
 		Device five = new Device(-45,-20);
 		
+		one.setPing(true);
+		two.setPing(true);
+		three.setPing(true);
+		four.setPing(true);
+		five.setPing(true);
+		
 		one.addConnection(centrality);
 		one.setIP(0, 0, 0, 0);
 		two.addConnection(centrality);
@@ -276,22 +284,27 @@ public class Simulation extends BasicGameState {
 		five.addConnection(centrality);
 		five.setIP(4, 4, 4, 4);
 		
-		Device output = new Device(20,0);
+		Device output = new Device(30,0);
 		output.setIP(5, 5, 5, 5);
-		centrality.addConnection(output);
 		
-		Device clientOne = new Device(35,15);
+		Device clientOne = new Device(40,15);
 		clientOne.setIP(6, 6, 6, 6);
-		Device clientTwo = new Device(35,-15);
+		Device clientTwo = new Device(40,-15);
 		clientTwo.setIP(7, 7, 7, 7);
 		
 		output.addConnection(clientOne);
 		output.addConnection(clientTwo);
 		
-//		centrality.insertRule(RuleType.DROP, one.getIP(), 32, centrality.getIP(), 0, Protocol.TCP);
+		Device mitm = new Device(15,0);
+		mitm.setIP(8,8,8,8);
+		centrality.addConnection(mitm);
+		mitm.addConnection(output);
 		
-		/* Middle-Man-Attack */
+		Device badUser = new Device(15,-20);
+		badUser.setIP(9,9,9,9);
 		
+//		mitm.addConnection(badUser);
+		mitm.newNATRule(new NatRule(NatType.DNAT, badUser.getIP(), output.getIP()));
 		
 		
 	}
@@ -310,9 +323,6 @@ public class Simulation extends BasicGameState {
 
 	@Override
 	public void update(GameContainer arg0, StateBasedGame arg1, int arg2) throws SlickException {	
-	
-		
-		
 		/* Process User Keyboard Input */
 		// Packet Generating P
 		if ( arg0.getInput().isKeyDown(Input.KEY_P) ) {

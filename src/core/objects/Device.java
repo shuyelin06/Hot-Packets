@@ -13,6 +13,7 @@ import core.Network;
 import core.NetworkObject;
 import core.NetworkObject.Status;
 import core.geometry.Vector;
+import core.objects.Packet.Protocol;
 import core.protocols.FilterRule;
 import core.protocols.NatRule;
 import core.protocols.Rule;
@@ -174,6 +175,13 @@ public class Device extends NetworkObject {
 	
 	// Update Device
 	public void update() {
+		// If Ping Setting is True, Ping Other Devices
+		if ( ping ) {
+			if ( Math.random() < 0.075f) 
+				new Packet(this, randomConnection(4), Math.random() < 0.5 ? Protocol.TCP : Protocol.UDP);
+		}
+		
+		// Traffic Settings
 		traffic += Settings.Max_Traffic;
 		if ( Settings.Max_Traffic > 1f) {
 			if ( traffic > Settings.Max_Traffic )
@@ -420,15 +428,15 @@ public class Device extends NetworkObject {
 	// Draw Edge
 	private void drawEdge(Device d, Graphics g) {
 		g.setColor(new Color(211, 211, 211, 200));
-		g.setLineWidth(Settings.Pixels_Per_Unit / 2.5f);
+		g.setLineWidth(Settings.Pixels_Per_Unit / 2.75f);
 		
 		// Get direction to destination
 		Vector direction = position.directionTo(d.position);
 		float distance = position.distance(d.position);
 		
 		// Arrow End
-		float arrowEndX = position.x + direction.x * distance * 0.925f;
-		float arrowEndY = position.y + direction.y * distance * 0.925f;
+		float arrowEndX = position.x + direction.x * distance * 0.825f;
+		float arrowEndY = position.y + direction.y * distance * 0.825f;
 		
 		// Draw Arrow
 		g.drawLine(

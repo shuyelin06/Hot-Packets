@@ -257,7 +257,7 @@ public class CommandBox extends Box {
 					for ( int i : srcIP ) { System.out.println(i); }
 					Device dev = Network.getInstance().searchForDevice(srcIP);
 					// Tell Device to Ping
-					dev.setPing(true);
+					dev.setPing(!dev.getPing());
 					
 					break;
 					

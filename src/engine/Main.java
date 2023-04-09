@@ -39,7 +39,7 @@ public class Main extends StateBasedGame {
 			Settings.Screen_Width = appgc.getScreenWidth();
 			Settings.Screen_Height = appgc.getScreenHeight();
 			
-			appgc.setDisplayMode(Settings.Screen_Width, Settings.Screen_Height, true);
+			appgc.setDisplayMode(Settings.Screen_Width, Settings.Screen_Height, false);
 			appgc.setTargetFrameRate(60);
 			
 			appgc.start();
