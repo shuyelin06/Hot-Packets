@@ -43,6 +43,8 @@ public class Device extends NetworkObject {
 	// Device image (same for every device object)
 	private static Image device_image;
 	
+	// Tracks if a Device will Constantly Ping
+	private boolean ping;
 	
 	// Get Connections
 	public ArrayList<Device> getConnections() { return connections; }
@@ -78,6 +80,8 @@ public class Device extends NetworkObject {
 		position.y = y;
 		
 		// Initialize Variables
+		ping = false;
+		
 		FilterRules = new ArrayList<>();
 		NatRules = new ArrayList<>();
 		connections = new ArrayList<>();
@@ -93,10 +97,19 @@ public class Device extends NetworkObject {
 				(int) (Math.random() * 255), (int) (Math.random() * 255));
 	}
 	
+	// Setters
+	// Set the Device IP
+	public Device setIP(int[] ip) { this.ip = ip;			return this; } 
+	// Set the Device Name
+	public Device setName(String name) { this.name = name; 	return this; }
+	// Set if the Device Should Ping
+	public Device setPing(boolean ping) { this.ping = ping; return this; }
 	public boolean congested() { return traffic < 1f; }
 	
 	public Color getColor() { return deviceColor; }
 	
+	public Color getColor() { return deviceColor; }
+	public boolean getPing() { return ping; }
 	// Returns a String Representing its IP
 	public String ipString() {
 		return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
@@ -118,7 +131,9 @@ public class Device extends NetworkObject {
 		
 	// Adds an Outgoing Connection
 	public void addConnection(Device d) {
-		connections.add(d);
+		if ( !connections.contains(d) ) {
+			connections.add(d);
+		}
 	}
 	
 	// Sets the IP

@@ -49,6 +49,22 @@ public class Simulation extends BasicGameState {
 		return simulation;
 	}
 	
+	// Convert from IP String to IP Array
+	public static int[] ArrayIP(String ip) {
+		System.out.println(ip + " to break");
+		int[] convertedIP = new int[4];
+		String[] split = ip.split("\\.");
+		System.out.println(split[0] + " first ");
+		
+		for ( String s : split ) { System.out.println(s); }
+		convertedIP[0] = Integer.parseInt(split[0]);
+		convertedIP[1] = Integer.parseInt(split[1]);
+		convertedIP[2] = Integer.parseInt(split[2]);
+		convertedIP[3] = Integer.parseInt(split[3]);
+		
+		return convertedIP;
+	}
+
 	// Convert from IP (Array) to String
 	public static String IPString(int[] ip) 
 		{ return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3]; }
