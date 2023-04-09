@@ -60,7 +60,7 @@ public abstract class Box {
 	// Rendering
 	public void draw(Graphics g) {
 		g.setColor(Color.gray);
-		g.fillRect(centerX - width / 2, centerY - height / 2, width, height);
+		g.fillRoundRect(centerX - width / 2, centerY - height / 2, width, height, 5);
 	}
 	
 }

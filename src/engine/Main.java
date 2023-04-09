@@ -33,14 +33,16 @@ public class Main extends StateBasedGame {
 	{
 		try 
 		{
-			appgc = new AppGameContainer(new Main("Bitcamp 2023"));
+			appgc = new AppGameContainer(new Main("Hot Packets"));
 			System.setProperty("org.lwjgl.opengl.Window.undecorated", "true");
 			
 			Settings.Screen_Width = appgc.getScreenWidth();
 			Settings.Screen_Height = appgc.getScreenHeight();
 			
-			appgc.setDisplayMode(Settings.Screen_Width, Settings.Screen_Height, false);
+			appgc.setDisplayMode(Settings.Screen_Width, Settings.Screen_Height, true);
 			appgc.setTargetFrameRate(60);
+			
+			appgc.setShowFPS(false);
 			
 			appgc.start();
 			appgc.setVSync(true);

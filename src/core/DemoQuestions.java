@@ -90,7 +90,7 @@ public class DemoQuestions {
 			
 
 	
-	public final static ArrayList<String> array = CipherTech;
+	public final static ArrayList<String> array = bitcamp;
 	
 	public static String randomString() { 
 		if ( array != null ) {

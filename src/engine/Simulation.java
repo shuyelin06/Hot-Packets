@@ -219,7 +219,7 @@ public class Simulation extends BasicGameState {
 
 		
 		
-		/* Big Web */
+//		/* Big Web */
 //		Device one = new Device(-65, 10);
 //		one.setIP(1, 2, 3, 4);
 //		Device two = new Device(-25, 35);
@@ -302,8 +302,9 @@ public class Simulation extends BasicGameState {
 		
 		Device badUser = new Device(15,-20);
 		badUser.setIP(9,9,9,9);
-		
+
 //		mitm.addConnection(badUser);
+		
 		mitm.newNATRule(new NatRule(NatType.DNAT, badUser.getIP(), output.getIP()));
 		
 		
