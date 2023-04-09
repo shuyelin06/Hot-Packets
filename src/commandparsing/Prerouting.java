@@ -8,28 +8,28 @@ public class Prerouting extends CommandParser{
 	public Prerouting (String commandToParse) {
 		super(commandToParse);
 		userCommand = commandToParse;
-		command = "iptables --table nat --insert PREROUTING --source 0.0.0.0/0 --destination";
-		commandArray = command.split(" ", 10);
+		// nat preroute [src] to [dest] [new_src]
+		command = "nat preroute to";
+		commandArray = command.split(" ");
 		
-		userCommandArray = userCommand.split(" ", 10);
+		userCommandArray = userCommand.split(" ");
 		
-		wordsToCheck = Arrays.asList(0, 1, 2, 3, 4, 5, 7);
-		numArguments = 2;
+		wordsToCheck = Arrays.asList(0, 1, 3);
+		numArguments = 3;
  	}
 	
+	// Returns Source IP
+	public String getSrcIP() {
+		return userCommandArray[2];
+	}
 	
+	// Returns Dest IP
+	public String getDestIP() {
+		return userCommandArray[4];
+	}
 	
-	// Returns source and destination IPs in an array of Strings;
-	// returns null if command is invalid
-	public String[] getSrcAndDestIPs() {
-		String[] srcAndDestIPs = null;
-		// if command is valid
-		if (checkValidCommand()) {
-			srcAndDestIPs = new String[2];
-			srcAndDestIPs[0] = "0.0.0.0/0";
-			srcAndDestIPs[1] = userCommandArray[8];
-		}	
-		
-		return srcAndDestIPs;
+	// New Source
+	public String getNewSrc() {
+		return userCommandArray[5];
 	}
 }

@@ -8,16 +8,15 @@ public class SendPacket extends CommandParser{
 	public SendPacket (String commandToParse) {
 		super(commandToParse);
 		userCommand = commandToParse;
-		// send packet source IP [source IP] destination IP [destination IP] protocol [protocol]
-		command = "send packet source IP destination IP protocol";
-		commandArray = command.split(" ", 10);
+		// packet [source ip] to [destination ip] [protocol]
+		command = "packet to";
+		commandArray = command.split(" ");
 		
-		userCommandArray = userCommand.split(" ", 10);
+		userCommandArray = userCommand.split(" ");
 		
-		wordsToCheck = Arrays.asList(0, 1, 2, 3, 5, 6, 8);
+		wordsToCheck = Arrays.asList(0, 2);
 		numArguments = 3;
-	}
-	
+	}	
 	
 	
 	// Returns source IP; returns null if command is invalid
@@ -25,7 +24,7 @@ public class SendPacket extends CommandParser{
 		String sourceIP = null;
 		// if command is valid
 		if (checkValidCommand()) {
-			sourceIP = userCommandArray[4];
+			sourceIP = userCommandArray[1];
 		}	
 		
 		return sourceIP;
@@ -36,7 +35,7 @@ public class SendPacket extends CommandParser{
 		String destinationIP = null;
 		// if command is valid
 		if (checkValidCommand()) {
-			destinationIP = userCommandArray[7];
+			destinationIP = userCommandArray[3];
 		}	
 		
 		return destinationIP;
@@ -47,7 +46,7 @@ public class SendPacket extends CommandParser{
 		String protocol = null;
 		// if command is valid
 		if (checkValidCommand()) {
-			protocol = userCommandArray[9];
+			protocol = userCommandArray[4];
 		}	
 		
 		return protocol;

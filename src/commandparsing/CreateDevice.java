@@ -33,12 +33,6 @@ public class CreateDevice extends CommandParser{
 	
 	// Returns name; returns null if command is invalid
 	public String getName() {
-		String name = null;
-		// if command is valid
-		if (checkValidCommand()) {
-			name = userCommandArray[5];
-		}	
-		
-		return name;
+		return userCommandArray[5];
 	}
 }

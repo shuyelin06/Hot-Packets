@@ -23,7 +23,6 @@ import core.geometry.Vector;
 import core.objects.Device;
 import core.objects.Packet;
 import graphics.Box;
-import graphics.Text_Input;
 import graphics.boxes.CommandBox;
 import graphics.boxes.InfoBox;
 import graphics.boxes.MouseBox;
@@ -93,9 +92,6 @@ public class Simulation extends BasicGameState {
 
 	// Track User Input
 	private Input input;
-
-	// Track Commands
-	private Text_Input commands;
 
 	// Graphics
 	private ArrayList<Box> boxes;

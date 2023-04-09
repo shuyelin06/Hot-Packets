@@ -51,7 +51,8 @@ public class CommandParser {
 					if (createDev.checkValidCommand()) type = CommandType.CREATEDEVICE;
 					else {
 						CreateConnection createCon = new CreateConnection(userCommand);
-						if (createCon.checkValidCommand()) type = CommandType.CREATEDEVICE;
+						System.out.println("Create nuts");
+						if (createCon.checkValidCommand()) type = CommandType.CREATECONNECTION;
 						else {
 							SendPacket sendPac = new SendPacket(userCommand);
 							if (sendPac.checkValidCommand()) type = CommandType.SENDPACKET;
@@ -72,7 +73,7 @@ public class CommandParser {
 	
 	// Returns true if command follows template, false if it doesn't
 	public boolean checkValidCommand() {
-		System.out.println("Valid Check: " + commandArray[0]);
+		System.out.println("Valid Check: " + commandArray[0] + commandArray[1]);
 		boolean isValid = true;
 		// check if user command length is same as template command length
 		 if (userCommandArray.length == commandArray.length + numArguments) {
@@ -101,6 +102,7 @@ public class CommandParser {
 		 }
 		 else isValid = false;
 		 
+		 System.out.println("(2) Valid Check: " + commandArray[0] + commandArray[1]);
 		 return isValid;
 	}
 }

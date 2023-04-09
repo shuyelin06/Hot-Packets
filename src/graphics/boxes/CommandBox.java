@@ -124,6 +124,8 @@ public class CommandBox extends Box {
 			switch ( type ) {
 				case PREROUTING:
 					Prerouting prting = new Prerouting(text);
+					
+
 					System.out.println("PREROUTING!");
 					break;
 					

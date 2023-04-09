@@ -8,13 +8,13 @@ public class Ping extends CommandParser{
 	public Ping (String commandToParse) {
 		super(commandToParse);
 		userCommand = commandToParse;
-		// ping from source IP [source IP]
-		command = "ping from source IP";
-		commandArray = command.split(" ", 10);
+		// ping from [source ip]
+		command = "ping from";
+		commandArray = command.split(" ");
 		
-		userCommandArray = userCommand.split(" ", 10);
+		userCommandArray = userCommand.split(" ");
 		
-		wordsToCheck = Arrays.asList(0, 1, 2, 3);
+		wordsToCheck = Arrays.asList(0, 1);
 		numArguments = 1;
 	}
 	
@@ -24,7 +24,7 @@ public class Ping extends CommandParser{
 		String sourceIP = null;
 		// if command is valid
 		if (checkValidCommand()) {
-			sourceIP = userCommandArray[4];
+			sourceIP = userCommandArray[2];
 		}	
 		
 		return sourceIP;

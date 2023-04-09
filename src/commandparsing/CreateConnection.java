@@ -8,13 +8,13 @@ public class CreateConnection extends CommandParser{
 	public CreateConnection (String commandToParse) {
 		super(commandToParse);
 		userCommand = commandToParse;
-		// create connection source IP [source IP] destination IP [destination IP]
-		command = "create connection source IP destination IP";
-		commandArray = command.split(" ", 10);
+		// connect [source] to [destination]
+		command = "connect to";
+		commandArray = command.split(" ");
 		
-		userCommandArray = userCommand.split(" ", 10);
+		userCommandArray = userCommand.split(" ");
 		
-		wordsToCheck = Arrays.asList(0, 1, 2, 3, 5, 6);
+		wordsToCheck = Arrays.asList(0, 2);
 		numArguments = 2;
  	}
 	
@@ -22,23 +22,13 @@ public class CreateConnection extends CommandParser{
 	
 	// Returns source IP; returns null if command is invalid
 	public String getSourceIP() {
-		String sourceIP = null;
-		// if command is valid
-		if (checkValidCommand()) {
-			sourceIP = userCommandArray[4];
-		}	
-		
-		return sourceIP;
+		System.out.println("@: " + userCommandArray[1]);
+		return userCommandArray[1];
 	}
 	
 	// Returns destination IP; returns null if command is invalid
 	public String getDestinationIP() {
-		String destinationIP = null;
-		// if command is valid
-		if (checkValidCommand()) {
-			destinationIP = userCommandArray[7];
-		}	
-		
-		return destinationIP;
+		System.out.println("3: " + userCommandArray[3]);
+		return userCommandArray[3];
 	}
 }
