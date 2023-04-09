@@ -2,7 +2,7 @@
 ##### Creators: Wendy Tu, Brian Xie, Anna Dai, Shu-Ye Lin
 
 ### About
-Built using the Slick2D graphics library, Hot Packets is a network simulation tool envisioned during and developed at <a href = "https://bitcamp2023.devpost.com/?ref_feature=challenge&ref_medium=discover">Bitcamp 2023</a> in 36 hours. Winning the **Best Bitcamp Hack** award (<a href = "https://devpost.com/software/hot-packets?ref_content=user-portfolio&ref_feature=in_progress">see here!</a>), Hot Packets simulates the intricacies of packet flow throughout a network system in an easy-to-understand manner, and even supports`iptable` filter and NAT rules.
+Built using the Slick2D graphics library, Hot Packets is a network simulation tool envisioned during and developed at <a href = "https://bitcamp2023.devpost.com/?ref_feature=challenge&ref_medium=discover">Bitcamp 2023</a> in less than 36 hours. Winning the **Best Bitcamp Hack** award (<a href = "https://devpost.com/software/hot-packets?ref_content=user-portfolio&ref_feature=in_progress">see here!</a>), Hot Packets simulates the intricacies of packet flow throughout a network system in an easy-to-understand manner, and even supports`iptable` filter and NAT rules.
 
 To interact with the simulation, the user is provided with simple sliders (to adjust simulation settings) and a command prompt for additional functionality. 
 
