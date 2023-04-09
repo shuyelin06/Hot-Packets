@@ -72,15 +72,31 @@ public class CommandParser {
 	
 	// Returns true if command follows template, false if it doesn't
 	public boolean checkValidCommand() {
+		System.out.println("Valid Check: " + commandArray[0]);
 		boolean isValid = true;
 		// check if user command length is same as template command length
 		 if (userCommandArray.length == commandArray.length + numArguments) {
+			 System.out.println("---");
+			 
+			 for ( String s : commandArray ) { System.out.println(s); }
+			 
 			 // checks if user command matches template command
 			 for (int i = 0; i < commandArray.length; i++) {
-				 String userCommandWord = userCommandArray[wordsToCheck.get(i)];
+				 
+//				 System.out.println(userCommandArray[wordsToCheck.get(i)]);
+				 int index =  wordsToCheck.get(i);
+				 String userCommandWord = userCommandArray[index];
+				 
+				 System.out.println("1: " + userCommandArray[index]);
+				 System.out.println("2: " + commandArray[i]);
+				 
+				 
 				 // if user command doesn't match, return false
-				 if (!(userCommandWord.equals(commandArray[i])))
+				 if (!(userCommandWord.equals(commandArray[i]))) {
 					 isValid = false;
+					 break;
+				 }
+					 
 			 }
 		 }
 		 else isValid = false;

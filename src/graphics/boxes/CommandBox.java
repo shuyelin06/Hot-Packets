@@ -120,6 +120,7 @@ public class CommandBox extends Box {
 			Device srcDevice;
 			Device destDevice;
 			
+			try {
 			switch ( type ) {
 				case PREROUTING:
 					Prerouting prting = new Prerouting(text);
@@ -189,19 +190,27 @@ public class CommandBox extends Box {
 					break;
 					
 				case PING:
+					System.out.println("Ping");
+					
 					Ping ping = new Ping(text);
 					
 					// Find IP Address
 					srcIP = Simulation.ArrayIP(ping.getSourceIP());
 					
 					// Find Device
+					System.out.println("---");
+					for ( int i : srcIP ) { System.out.println(i); }
 					Device dev = Network.getInstance().searchForDevice(srcIP);
 					// Tell Device to Ping
 					dev.setPing(true);
 					
+					System.out.println(":)");
+					System.out.println(dev.getPing());
+					
 					break;
 					
 			}
+			} catch (Exception e) {}
 		}
 	}
 	

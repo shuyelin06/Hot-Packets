@@ -47,7 +47,10 @@ public class Network {
 	// an IP Address
 	public Device searchForDevice(int[] ip) {
 		for ( Device d : devices ) {
-			if ( Arrays.equals(ip, d.getIP()) ) {
+			if ( ip[0] == d.getIP()[0]
+				&& ip[1] == d.getIP()[1] 
+				&& ip[2] == d.getIP()[2]
+				&& ip[3] == d.getIP()[3] ) {
 				return d;
 			}
 		}

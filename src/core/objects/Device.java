@@ -79,7 +79,7 @@ public class Device extends NetworkObject {
 	public Device setPing(boolean ping) { this.ping = ping; return this; }
 	
 	public Color getColor() { return deviceColor; }
-	
+	public boolean getPing() { return ping; }
 	// Returns a String Representing its IP
 	public String ipString() {
 		return ip[0] + "." + ip[1] + "." + ip[2] + "." + ip[3];
