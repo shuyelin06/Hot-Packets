@@ -14,6 +14,7 @@ import org.newdawn.slick.gui.TextField;
 import commandparsing.CommandParser;
 import commandparsing.Prerouting;
 import core.Network;
+import core.geometry.Vector;
 import core.objects.Device;
 import core.objects.Packet;
 import core.objects.Packet.Protocol;
@@ -185,7 +186,6 @@ public class CommandBox extends Box {
 						rule = RuleType.DROP;
 					}
 					
-					
 					FilterRule filterRule = 
 							new FilterRule(rule, src, dest, protocol);
 					host.newFilterRule(filterRule);
@@ -196,9 +196,12 @@ public class CommandBox extends Box {
 					CreateDevice createDev = new CreateDevice(text);
 					
 					int[] ip = Simulation.ArrayIP(createDev.getIP());
-					String name = createDev.getName();
 					
-					Device device = new Device(0, 0);
+					// Randomize Device Location
+					Vector center = Simulation.getInstance().getCenter();
+					Device device = new Device(
+							(float) (center.x + (Math.random() * 75f) - 32.5f), 
+							(float) (center.y + (Math.random() * 75f) - 32.5f));
 					device
 						.setIP(ip);
 					

@@ -29,13 +29,11 @@ public class Network {
 	
 	// All devices in the network
 	private ArrayList<Device> devices;
-	
 	// Stack of new devices to be added
 	private Stack<Device> newDevices;
 	
 	// All packets in the network
 	private ArrayList<Packet> packets;
-	
 	// Stack of new packets to be added
 	private Stack<Packet> newPackets;
 	
@@ -49,11 +47,7 @@ public class Network {
 	}
 	
 	// Add a Device
-	public void addDevice(Device d) { 
-		newDevices.push(d); 
-		devices.add(newDevices.pop()); 
-	}
-	
+	public void addDevice(Device d) {  newDevices.push(d); }
 	// Add a Packet
 	public void addPacket(Packet p) { newPackets.push(p); }
 	
@@ -106,6 +100,9 @@ public class Network {
 	
 	// Update Method
 	public void update() {
+		while (!newDevices.isEmpty()) {
+			devices.add(newDevices.pop());
+		}
 		while (!newPackets.isEmpty()) {
 			packets.add(newPackets.pop());
 		}

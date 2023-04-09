@@ -8,14 +8,14 @@ public class CreateDevice extends CommandParser{
 	public CreateDevice (String commandToParse) {
 		super(commandToParse);
 		userCommand = commandToParse;
-		// create device ip [ip] name [name]
-		command = "create device name";
-		commandArray = command.split(" ", 10);
+		// create device [ip]
+		command = "create device";
+		commandArray = command.split(" ");
 		
-		userCommandArray = userCommand.split(" ", 10);
+		userCommandArray = userCommand.split(" ");
 		
-		wordsToCheck = Arrays.asList(0, 1, 2, 4);
-		numArguments = 2;
+		wordsToCheck = Arrays.asList(0, 1);
+		numArguments = 1;
  	}
 	
 	
@@ -25,14 +25,10 @@ public class CreateDevice extends CommandParser{
 		String ip = null;
 		// if command is valid
 		if (checkValidCommand()) {
-			ip = userCommandArray[3];
+			ip = userCommandArray[2];
 		}	
 		
 		return ip;
 	}
 	
-	// Returns name; returns null if command is invalid
-	public String getName() {
-		return userCommandArray[5];
-	}
 }
